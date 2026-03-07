@@ -13,27 +13,31 @@ on:  # yamllint disable-line rule:truthy
 
 env:
   # https://learnxinyminutes.com/yaml/
+  # https://github.com/adambard/learnxinyminutes-docs/blob/master/ru/yaml.md
 
-  # Comments in YAML look like this.
+  # Комментарий в YAML выглядит как-то так.
   # YAML supports single-line comments.
 
-  ################
-  # SCALAR TYPES #
-  ################
+  ######################
+  # Скалярные величины #
+  ######################
 
-  # Our root object (which continues for the entire document) will be a map,
-  # which is equivalent to a dictionary, hash or object in other languages.
+  # Наш корневой объект (который продолжается до конца документа) будет
+  # соответствовать типу map, который в свою очередь соответствует словарю,
+  # хешу или объекту в других языках.
+
   key: value
-  another_key: Another value goes here.
+  another_key: Другое значение ключа.
   a_number_value: 100
   scientific_notation: 1e+12
   hex_notation: 0x123   # evaluates to 291
   octal_notation: 0123  # evaluates to 83
-  # The number 1 will be interpreted as a number, not a boolean.
-  # If you want it to be interpreted as a boolean, use true.
+  # Число 1 будет интерпретировано как число, а не как логический тип. Если
+  # необходимо чтобы значение было интерпретировано как логическое, необходимо
+  # использовать true
   boolean: true
   null_value: null
-  another_null_value: ~
+  another_null_value: ~  # TODO ru
   key with spaces: value
 
   # Yes and No (doesn't matter the case) will be evaluated to boolean
@@ -47,12 +51,14 @@ env:
   not_enclosed: yes  # evaluates to "not_enclosed": true
   enclosed: "yes"    # evaluates to "enclosed": yes
 
-  # Notice that strings don't need to be quoted. However, they can be.
-  however: 'A string, enclosed in quotes.'
+  # Обратите внимание что строки используются без кавычек, но могут и с
+  # кавычками.
+  however: 'Строка заключенная в кавычки.'
   # ПРЕДУПРЕЖДЕНИЕ: `PowerShell` и `bash` требуют особенного способа доступа к
   #                 `Keys can be quoted too.`, `single quotes`
-  'Keys can be quoted too.': "Useful if you want to put a ':' in your key."
-  single quotes: 'have ''one'' escape pattern'
+  'Ключ заключенный в кавычки.': "Полезно если нужно использовать ':' в вашем
+    ключе."
+  single quotes: 'Содержит ''одну'' экранированную строку'
   # ПРЕДУПРЕЖДЕНИЕ: GitHub корректно распознаёт и устанавливает
   #                 `env.double quotes`.  Однако, переменные окружения
   #                 обрезаются по символу `\0`.
