@@ -259,7 +259,6 @@ jobs:
         env -0 | grep -E -z "^(explicit_boolean)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(explicit_integer|explicit_float)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(explicit_string)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(explicit_datetime)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(explicit_null)=" | tr "\0" "\n"
         echo "---"
 
@@ -270,6 +269,7 @@ jobs:
         env -0 | grep -E -z "^(a_sequence|json_map|json_seq)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(and quotes are optional)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(base|foo|bar)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_datetime)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(python_complex_number)=" | tr "\0" "\n"
 
         env -0 | grep -E -z "Fifty Seven" | tr "\0" "\n"
