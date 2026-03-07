@@ -61,6 +61,7 @@ env:
   # or a 'folded block' (using '>').  Literal block turn every newline within
   # the string into a literal newline (\n).  Folded block removes newlines
   # within the string.
+  # ПРЕДУПРЕЖДЕНИЕ: `printenv` неприменим, следует использовать `env -0`
   literal_block: |
     This entire block of text will be the value of the 'literal_block' key,
     with line breaks being preserved.
@@ -153,6 +154,7 @@ jobs:
           echo "Keys can be quoted too.=$(
                   env | sed -n '/^Keys can be quoted too\.=/s///p')"
           echo "single quotes=$(env | sed -n '/^single quotes=/s///p')"
+          echo "double quotes=$(env | sed -n '/^double quotes=/s///p')"
           echo "literal_block=$literal_block"
 
       - shell: pwsh
@@ -161,6 +163,7 @@ jobs:
           ${{ env.printenv-grep-E }}
           "Keys can be quoted too.=${env:Keys can be quoted too.}"
           "single quotes=${env:single quotes}"
+          "double quotes=${env:double quotes}"
           "literal_block=$env:literal_block"
 
       - if: ${{ matrix.platform == 'win32' }}
@@ -170,4 +173,5 @@ jobs:
           ${{ env.printenv-grep-E }}
           echo "Keys can be quoted too.=%Keys can be quoted too.%"
           echo "single quotes=%single quotes%"
+          echo "double quotes=%double quotes%"
           echo "literal_block=%literal_block%"
