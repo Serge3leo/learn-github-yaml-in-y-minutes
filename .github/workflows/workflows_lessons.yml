@@ -135,7 +135,7 @@ jobs:
         env -0 | grep -E -z "^(literal_block|folded_style)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(literal_strip|block_strip)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(literal_keep|block_keep)=" | tr "\0" "\n"
-        echo "---"
+        echo ---
 
     steps:
       - uses: actions/checkout@v4
