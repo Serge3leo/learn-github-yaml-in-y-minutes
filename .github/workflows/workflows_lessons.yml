@@ -116,6 +116,7 @@ env:
   # COLLECTION TYPES #
   ####################
 
+  # (Line: 121, Col: 5): A mapping was not expected
   # # Nesting uses indentation. 2 space indent is preferred (but not required).
   # a_nested_map:
   #   key: value
@@ -126,7 +127,7 @@ env:
   # Maps don't have to have string keys.
   0.25: a float key
 
-  # GitHub unimplemented TODO
+  # (Line: 26, Col: 3): Non-scalar mapping key is not supported
   # # Keys can also be complex, like multi-line objects
   # # We use ? followed by a space to indicate the start of a complex key.
   # ? |
@@ -134,7 +135,7 @@ env:
   #   that has multiple lines
   # : and this is its value
 
-  # GitHub unimplemented TODO
+  # (Line: 26, Col: 3): Non-scalar mapping key is not supported
   # # YAML also allows mapping between sequences with the complex key syntax
   # # Some language parsers might complain
   # # An example
@@ -142,25 +143,62 @@ env:
   #   - Real Madrid
   # : [2001-01-01, 2002-02-02]
 
-  # Sequences (equivalent to lists or arrays) look like this
-  # (note that the '-' counts as indentation):
-  a_sequence:
-    - Item 1
-    - Item 2
-    - 0.5  # sequences can contain disparate types.
-    - Item 4
-    - key: value
-      another_key: another_value
-    - - This is a sequence
-      - inside another sequence
-    - - - Nested sequence indicators
-        - can be collapsed
+  # (Line: 148, Col: 5): A sequence was not expected
+  # # Sequences (equivalent to lists or arrays) look like this
+  # # (note that the '-' counts as indentation):
+  # a_sequence:
+  #   - Item 1
+  #   - Item 2
+  #   - 0.5  # sequences can contain disparate types.
+  #   - Item 4
+  #   - key: value
+  #     another_key: another_value
+  #   - - This is a sequence
+  #     - inside another sequence
+  #   - - - Nested sequence indicators
+  #       - can be collapsed
 
-  # Since YAML is a superset of JSON, you can also write JSON-style maps and
-  # sequences:
-  json_map: {"key": "value"}
-  json_seq: [3, 2, 1, "takeoff"]
-  and quotes are optional: {key: [3, 2, 1, takeoff]}
+  # (Line: 161, Col: 13): A mapping was not expected,
+  # # Since YAML is a superset of JSON, you can also write JSON-style maps and
+  # # sequences:
+  # json_map: {"key": "value"}
+  # # (Line: 162, Col: 13): A sequence was not expected
+  # json_seq: [3, 2, 1, "takeoff"]
+  # # (Line: 163, Col: 28): A mapping was not expected
+  # and quotes are optional: {key: [3, 2, 1, takeoff]}
+
+  #######################
+  # EXTRA YAML FEATURES #
+  #######################
+
+  # YAML also has a handy feature called 'anchors', which let you easily
+  # duplicate content across your document.
+  # Anchors identified by & character which define the value.
+  # Aliases identified by * character which acts as "see above" command.
+  # Both of these keys will have the same value:
+  # anchored_content: &anchor_name This string will appear as the value of two
+  # keys.
+  anchored_content: &anchor_name string will appear as the value of two keys.
+  other_anchor: *anchor_name
+
+  # Anchors can be used to duplicate/inherit properties
+  base: &base
+    name: Everyone has same name
+
+  # The expression << is called 'Merge Key Language-Independent Type'. It is
+  # used to indicate that all the keys of one or more specified maps should be
+  # inserted into the current map.
+  # NOTE: If key already exists alias will not be merged
+  foo:
+    <<: *base  # doesn't merge the anchor
+    age: 10
+    name: John
+  bar:
+    <<: *base  # base anchor will be merged
+    age: 20
+
+# foo name won't be changed and it will be: John. On the other hand, bar's
+# name will be changed to the base one: Everyone has same name
 
 jobs:
   build:
@@ -198,14 +236,14 @@ jobs:
         env -0 | grep -E -z "^(literal_strip|block_strip)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(literal_keep|block_keep)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(0\.25)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(a_sequence|json_map|json_seq)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(and quotes are optional)=" | tr "\0" "\n"
         echo "---"
 
       unimplemented-part: >
         env -0 | grep -E -z "^(a_nested_map)=" | tr "\0" "\n"
         env -0 | grep -E -z "This is a key" | tr "\0" "\n"
         env -0 | grep -E -z "Manchester United" | tr "\0" "\n"
+        env -0 | grep -E -z "^(a_sequence|json_map|json_seq)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(and quotes are optional)=" | tr "\0" "\n"
 
         env -0 | grep -E -z "^(anchored_content|other_anchor)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(base|foo|bar)=" | tr "\0" "\n"
