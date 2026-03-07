@@ -54,30 +54,21 @@ jobs:
       - shell: bash
         run: |
           echo "key=$key"
-          echo "another_key=$another_key"
-          echo "a_number_value=$a_number_value"
-          echo "scientific_notation=$scientific_notation"
-          echo "hex_notation=$hex_notation"
-          echo "octal_notation=$octal_notation"
-          printenv | grep -E 'boolean|null_value|another_null_value|spaces'
+          printenv | grep -E "another_key|a_number_value|scientific_notation"
+          printenv | grep -E "hex_notation|octal_notation"
+          printenv | grep -E "boolean|null_value|another_null_value|spaces"
 
       - shell: pwsh
         run: |
           "key=$env:key"
-          "another_key=$env:another_key"
-          "a_number_value=$env:a_number_value"
-          "scientific_notation=$env:scientific_notation"
-          "hex_notation=$env:hex_notation"
-          "octal_notation=$env:octal_notation"
-          printenv | grep -E 'boolean|null_value|another_null_value|spaces'
+          printenv | grep -E "another_key|a_number_value|scientific_notation"
+          printenv | grep -E "hex_notation|octal_notation"
+          printenv | grep -E "boolean|null_value|another_null_value|spaces"
 
       - if: ${{ matrix.platform == 'win32' }}
         shell: cmd
         run: |
           echo "key=%key%"
-          echo "another_key=%another_key%"
-          echo "a_number_value=%a_number_value%"
-          echo "scientific_notation=%scientific_notation%"
-          echo "hex_notation=%hex_notation%"
-          echo "octal_notation=%octal_notation%"
-          printenv | grep -E 'boolean|null_value|another_null_value|spaces'
+          printenv | grep -E "another_key|a_number_value|scientific_notation"
+          printenv | grep -E "hex_notation|octal_notation"
+          printenv | grep -E "boolean|null_value|another_null_value|spaces"
