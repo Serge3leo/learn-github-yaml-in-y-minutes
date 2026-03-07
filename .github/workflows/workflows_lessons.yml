@@ -149,6 +149,7 @@ jobs:
           echo "Keys can be quoted too.=$(
                   env | sed -n '/^Keys can be quoted too\.=/s///p')"
           echo "single quotes=$(env | sed -n '/^single quotes=/s///p')"
+          echo "literal_block=$literal_block"
 
       - shell: pwsh
         run: |
@@ -156,6 +157,7 @@ jobs:
           ${{ env.printenv-grep-E }}
           "Keys can be quoted too.=${env:Keys can be quoted too.}"
           "single quotes=${env:single quotes}"
+          "literal_block=$env:literal_block"
 
       - if: ${{ matrix.platform == 'win32' }}
         shell: cmd
@@ -164,3 +166,4 @@ jobs:
           ${{ env.printenv-grep-E }}
           echo "Keys can be quoted too.=%Keys can be quoted too.%"
           echo "single quotes=%single quotes%"
+          echo "literal_block=%literal_block%"
