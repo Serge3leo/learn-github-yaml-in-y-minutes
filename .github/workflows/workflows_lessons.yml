@@ -358,6 +358,19 @@ jobs:
           python -m yamllint --list-file .
           python -m yamllint .
 
+      - name: Check booleans
+        shell: bash
+        run: |
+          echo "env.no is ${{ case(!env.no, 'false', 'true') }}"
+          echo "fromJSON(env.no)=${{ fromJSON(env.no) }}"
+          echo "env.yes is ${{ case(!env.yes, 'false', 'true') }}"
+          echo "fromJSON(env.yes)=${{ fromJSON(env.yes) }}"
+          echo "env.not_enclosed is
+                  ${{ case(!env.not_enclosed, 'false', 'true') }}"
+          echo "fromJSON(env.not_enclosed)=${{ fromJSON(env.not_enclosed) }}"
+          echo "env.enclosed is
+                  ${{ case(env.enclosed == 'yes', 'yes', 'NOT YES') }}"
+
       - shell: bash
         run: |
           echo "key=$key"
