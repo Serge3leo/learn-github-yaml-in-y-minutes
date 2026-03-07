@@ -249,6 +249,19 @@ env:
   #   +f/++f/++f/++f/++f/++SH+Dk1hZGUgd2l0aCBHSU1QACwAAAAADAAMAAAFLC
   #   AgjoEwnuNAFOhpEMTRiggcz4BNJHrv/zCFcLiwMWYNG84BwwEeECcgggoBADs=
 
+  # YAML also has a set type, which looks like this:
+  set:
+    ? item1
+    ? item2
+    ? item3
+  or: {item1, item2, item3}
+
+  # Sets are just maps with null values; the above is equivalent to:
+  set2:
+    item1: null
+    item2: null
+    item3: null
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -293,6 +306,7 @@ jobs:
         env -0 | grep -E -z "^(datetime_canonical)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(datetime_space_separated_.*)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(date_implicit)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(set|or|set2)=" | tr "\0" "\n"
         echo "---"
 
       unimplemented-part: >
