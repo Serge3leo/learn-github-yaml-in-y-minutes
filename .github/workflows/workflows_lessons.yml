@@ -57,9 +57,9 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: ${{ vars.MATRIX_OSs }}
         include:
-          - os: ${{ case(fromJSON(vars.DISABLE_MACOS), '', 'macos-latest') }}
+          - os: macos-latest
             platform: "darwin"
           - os: ubuntu-latest
             platform: "linux"
