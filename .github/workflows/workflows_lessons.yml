@@ -36,6 +36,12 @@ jobs:
           - os: windows-latest
             platform: "win32"
 
+    env:
+      boolean: true
+      null_value: null
+      another_null_value: ~
+      key with spaces: value
+
     steps:
       - uses: actions/checkout@v4
 
@@ -53,15 +59,17 @@ jobs:
           echo "scientific_notation=$scientific_notation"
           echo "hex_notation=$hex_notation"
           echo "octal_notation=$octal_notation"
+          printenv | egrep 'boolean|null_value|another_null_value|spaces'
 
       - shell: pwsh
         run: |
-          "key=$key"
-          "another_key=$another_key"
-          "a_number_value=$a_number_value"
-          "scientific_notation=$scientific_notation"
-          "hex_notation=$hex_notation"
-          "octal_notation=$octal_notation"
+          "key=$env:key"
+          "another_key=$env:another_key"
+          "a_number_value=$env:a_number_value"
+          "scientific_notation=$env:scientific_notation"
+          "hex_notation=$env:hex_notation"
+          "octal_notation=$env:octal_notation"
+          printenv | egrep 'boolean|null_value|another_null_value|spaces'
 
       - if: ${{ matrix.platform == 'win32' }}
         shell: cmd
@@ -72,3 +80,4 @@ jobs:
           echo "scientific_notation=%scientific_notation%"
           echo "hex_notation=%hex_notation%"
           echo "octal_notation=%octal_notation%"
+          printenv | egrep 'boolean|null_value|another_null_value|spaces'
