@@ -1,16 +1,14 @@
-[![Workflows Lessons by Learn YAML in Y minutes](https://github.com/Serge3leo/workflows_lessons/actions/workflows/workflows_lessons.yml/badge.svg?branch=main)](https://github.com/Serge3leo/workflows_lessons/actions/workflows/workflows_lessons.yml)
+[![CMake on multiple platforms](https://github.com/Serge3leo/countof_ns/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Serge3leo/countof_ns/actions/workflows/cmake-multi-platform.yml)
 
-# Learn GitHub in Y minutes (in Russian)
-My lessons of GitHub Actions workflows.
+# Изучаем GitHub за Y минут
 
-# Contributing
-Issues or PRs are accepted and welcome.
+Мои уроки по рабочим процессам GitHub Actions.
 
-# Disclaimer
-Sorry for my best English.  Alas, this file is actually a yandex translation of
-[README.ru.md](README.ru.md) with minimal editorial changes.
+# Участие
+Замечания (issues), добавления или исправления (pr) - принимаются и
+приветствуются.
 
-# Links
+# Ссылки
 - [Workflow syntax for GitHub Actions](
   https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax);
 - [Синтаксис рабочего процесса для GitHub Actions](
@@ -19,5 +17,5 @@ Sorry for my best English.  Alas, this file is actually a yandex translation of
   X=YAML)](https://learnxinyminutes.com/docs/yaml/);
 - [Изучите X за Y минут (Где X=YAML)](https://learnxinyminutes.com/ru/yaml/).
 
-# License
+# Лицензия
 [BSD-2-Clause © 2026 Сергей Леонтьев (leo@sai.msu.ru).](LICENSE)
