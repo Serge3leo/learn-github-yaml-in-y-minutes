@@ -156,6 +156,14 @@ jobs:
           echo "single quotes=$(env | sed -n '/^single quotes=/s///p')"
           echo "double quotes=$(env | sed -n '/^double quotes=/s///p')"
           echo "literal_block=$literal_block"
+          TEST_PRINTENV_B="Value printenv" ; export TEST_PRINTENV_B
+          printenv >> $GITHUB_ENV
+
+      - shell: bash
+        run: |
+          ${{ env.printenv-grep-E }}
+          echo "literal_block=$literal_block"
+          echo "TEST_PRINTENV_B=$TEST_PRINTENV_B"
 
       - shell: pwsh
         run: |
@@ -165,6 +173,14 @@ jobs:
           "single quotes=${env:single quotes}"
           "double quotes=${env:double quotes}"
           "literal_block=$env:literal_block"
+          $env:TEST_PRINTENV_P="Value printenv"
+          printenv >> $GITHUB_ENV
+
+      - shell: pwsh
+        run: |
+          ${{ env.printenv-grep-E }}
+          "literal_block=$env:literal_block"
+          "TEST_PRINTENV_P=$env:TEST_PRINTENV_P"
 
       - if: ${{ matrix.platform == 'win32' }}
         shell: cmd
@@ -175,3 +191,11 @@ jobs:
           echo "single quotes=%single quotes%"
           echo "double quotes=%double quotes%"
           echo "literal_block=%literal_block%"
+          set TEST_PRINTENV_C=Value printenv
+          printenv >> $GITHUB_ENV
+
+      - shell: cmd
+        run: |
+          ${{ env.printenv-grep-E }}
+          echo "literal_block=%literal_block%"
+          echo "TEST_PRINTENV_B=%TEST_PRINTENV_C%"
