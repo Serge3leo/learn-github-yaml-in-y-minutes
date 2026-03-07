@@ -157,7 +157,7 @@ jobs:
           echo "double quotes=$(env | sed -n '/^double quotes=/s///p')"
           echo "literal_block=$literal_block"
           TEST_PRINTENV_B="Value printenv" ; export TEST_PRINTENV_B
-          printenv >> $GITHUB_ENV
+          # printenv >> $GITHUB_ENV
 
       - shell: bash
         run: |
