@@ -174,7 +174,7 @@ jobs:
           "double quotes=${env:double quotes}"
           "literal_block=$env:literal_block"
           $env:TEST_PRINTENV_P="Value printenv"
-          printenv >> $GITHUB_ENV
+          printenv >> $env:GITHUB_ENV
 
       - shell: pwsh
         run: |
