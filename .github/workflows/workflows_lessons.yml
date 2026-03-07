@@ -1,0 +1,57 @@
+---
+# vim:set sw=2 ts=8 et fileencoding=utf8:
+# SPDX-License-Identifier: BSD-2-Clause
+# SPDX-FileCopyrightText: 2025 Сергей Леонтьев (leo@sai.msu.ru)
+
+name: Workflows Lessons by Learn YAML in Y minutes
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  key: value
+  another_key: Another value goes here.
+  a_number_value: 100
+  scientific_notation: 1e+12
+  hex_notation: 0x123   # evaluates to 291
+  octal_notation: 0123  # evaluates to 83
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            platform: "linux"
+          - os: windows-latest
+            platform: "win32"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint
+        run: |
+          python -m pip install yamllint
+          python -m yamllint --list-file .
+          python -m yamllint .
+
+      - shell: bash
+        run: |
+          printenv
+
+      - shell: pwsh
+        run: |
+          $env
+
+      - if: ${{ matrix.platform == 'win32' }}
+        shell: cmd
+        run: |
+          set
