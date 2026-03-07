@@ -181,24 +181,28 @@ env:
   anchored_content: &anchor_name string will appear as the value of two keys.
   other_anchor: *anchor_name
 
-  # Anchors can be used to duplicate/inherit properties
-  base: &base
-    name: Everyone has same name
+  # (Line: 185, Col: 9): A mapping was not expected
+  # # Anchors can be used to duplicate/inherit properties
+  # base: &base
+  #   name: Everyone has same name
 
-  # The expression << is called 'Merge Key Language-Independent Type'. It is
-  # used to indicate that all the keys of one or more specified maps should be
-  # inserted into the current map.
-  # NOTE: If key already exists alias will not be merged
-  foo:
-    <<: *base  # doesn't merge the anchor
-    age: 10
-    name: John
-  bar:
-    <<: *base  # base anchor will be merged
-    age: 20
+  # # The expression << is called 'Merge Key Language-Independent Type'. It is
+  # # used to indicate that all the keys of one or more specified maps should be
+  # # inserted into the current map.
+  # # NOTE: If key already exists alias will not be merged
+  # foo:
+  #   # (Line: 193, Col: 5): A mapping was not expected
+  #   <<: *base  # doesn't merge the anchor
+  #   age: 10
+  #   name: John
+  # bar:
+  #   # (Line: 197, Col: 5): A mapping was not expected
+  #   <<: *base  # base anchor will be merged
+  #   age: 20
 
-# foo name won't be changed and it will be: John. On the other hand, bar's
-# name will be changed to the base one: Everyone has same name
+  # foo name won't be changed and it will be: John. On the other hand, bar's
+  # name will be changed to the base one: Everyone has same name
+  tail: tail
 
 jobs:
   build:
@@ -236,6 +240,7 @@ jobs:
         env -0 | grep -E -z "^(literal_strip|block_strip)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(literal_keep|block_keep)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(0\.25)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(anchored_content|other_anchor)=" | tr "\0" "\n"
         echo "---"
 
       unimplemented-part: >
@@ -244,9 +249,8 @@ jobs:
         env -0 | grep -E -z "Manchester United" | tr "\0" "\n"
         env -0 | grep -E -z "^(a_sequence|json_map|json_seq)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(and quotes are optional)=" | tr "\0" "\n"
-
-        env -0 | grep -E -z "^(anchored_content|other_anchor)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(base|foo|bar)=" | tr "\0" "\n"
+
         env -0 | grep -E -z "^(explicit_boolean)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(explicit_integer|explicit_float)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(explicit_string)=" | tr "\0" "\n"
