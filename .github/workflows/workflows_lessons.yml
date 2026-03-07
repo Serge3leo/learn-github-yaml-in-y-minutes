@@ -158,7 +158,7 @@ jobs:
           echo "literal_block=$literal_block"
           TEST_PRINTENV_B="Value printenv" ; export TEST_PRINTENV_B
           # printenv >> $GITHUB_ENV
-          env >> $GITHUB_ENV
+          env -0 | tr "\0" "\n" >> $GITHUB_ENV
 
       - shell: bash
         run: |
@@ -176,7 +176,7 @@ jobs:
           "literal_block=$env:literal_block"
           $env:TEST_PRINTENV_P="Value printenv"
           # printenv >> $env:GITHUB_ENV
-          env >> $env:GITHUB_ENV
+          env -0 | tr "\0" "\n" >> $GITHUB_ENV
 
       - shell: pwsh
         run: |
@@ -194,7 +194,8 @@ jobs:
           echo "double quotes=%double quotes%"
           echo "literal_block=%literal_block%"
           set TEST_PRINTENV_C=Value printenv
-          printenv >> $GITHUB_ENV
+          rem printenv >> $GITHUB_ENV
+          env -0 | tr "\0" "\n" >> $GITHUB_ENV
 
       - shell: cmd
         run: |
