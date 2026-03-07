@@ -55,7 +55,7 @@ env:
   # кавычками.
   however: 'Строка заключенная в кавычки.'
   # ПРЕДУПРЕЖДЕНИЕ: `PowerShell` и `bash` требуют особенного способа доступа к
-  #                 `Keys can be quoted too.`, `single quotes`
+  #                 `Ключ заключенный в кавычки.`, `single quotes`
   'Ключ заключенный в кавычки.': "Полезно если нужно использовать ':' в вашем
     ключе."
   single quotes: 'Содержит ''одну'' экранированную строку'
@@ -299,7 +299,7 @@ jobs:
         env -0 | grep -E -z "^(another_null_value|spaces)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(no|yes|not_enclosed|enclosed)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(however)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(Keys can be quoted too[.])=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(Ключ заключенный в кавычки[.])=" | tr "\0" "\n"
         env -0 | grep -E -z "^(single quotes|double quotes)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(Superscript two.*)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(special_characters)=" | tr "\0" "\n"
@@ -345,8 +345,8 @@ jobs:
         run: |
           echo "key=$key"
           ${{ env.env-0-grep-E }}
-          echo "Keys can be quoted too.=$(
-                  env | sed -n '/^Keys can be quoted too\.=/s///p')"
+          echo "Ключ заключенный в кавычки.=$(
+                  env | sed -n '/^Ключ заключенный в кавычки\.=/s///p')"
           echo "single quotes=$(env | sed -n '/^single quotes=/s///p')"
           echo "double quotes=$(env | sed -n '/^double quotes=/s///p')"
           echo "literal_block=$literal_block"
@@ -355,7 +355,7 @@ jobs:
         run: |
           "key=$env:key"
           ${{ env.env-0-grep-E }}
-          "Keys can be quoted too.=${env:Keys can be quoted too.}"
+          "Ключ заключенный в кавычки.=${env:Ключ заключенный в кавычки.}"
           "single quotes=${env:single quotes}"
           "double quotes=${env:double quotes}"
           "literal_block=$env:literal_block"
@@ -365,7 +365,7 @@ jobs:
         run: |
           echo "key=%key%"
           ${{ env.env-0-grep-E }}
-          echo "Keys can be quoted too.=%Keys can be quoted too.%"
+          echo "Ключ заключенный в кавычки.=%Ключ заключенный в кавычки.%"
           echo "single quotes=%single quotes%"
           echo "double quotes=%double quotes%"
           echo "literal_block=%literal_block%"
