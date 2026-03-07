@@ -195,8 +195,8 @@ jobs:
           echo "double quotes=%double quotes%"
           echo "literal_block=%literal_block%"
           set TEST_PRINTENV_C=Value printenv
-          rem printenv >> $GITHUB_ENV
-          env -0 | tr "\0" "\n" >> $GITHUB_ENV
+          rem printenv >> %GITHUB_ENV%
+          env -0 | tr "\0" "\n" >> %GITHUB_ENV%
 
       - shell: cmd
         run: |
