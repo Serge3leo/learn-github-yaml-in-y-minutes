@@ -367,9 +367,9 @@ jobs:
           # echo "fromJSON(env.yes)=$#{{ fromJSON(env.yes) }}"
           echo "env.not_enclosed is
                 ${{ case(!env.not_enclosed, 'false', 'true') }}"
-          echo "fromJSON(env.not_enclosed)=${{ fromJSON(env.not_enclosed) }}"
-      #    echo "env.enclosed is
-      #            ${{ case(env.enclosed == 'yes', 'yes', 'NOT YES') }}"
+          echo "fromJSON(env.not_enclosed)=$#{{ fromJSON(env.not_enclosed) }}"
+          echo "env.enclosed is
+                ${{ case(env.enclosed == 'yes', 'yes', 'NOT YES') }}"
 
       - shell: bash
         run: |
