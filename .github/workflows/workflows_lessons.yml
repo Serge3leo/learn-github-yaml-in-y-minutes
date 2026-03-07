@@ -40,8 +40,9 @@ env:
 
   # Notice that strings don't need to be quoted. However, they can be.
   however: 'A string, enclosed in quotes.'
+  # ПРЕДУПРЕЖДЕНИЕ: У `PowerShell` и `bash` нет простых средств доступа к
+  #                 `Keys can be quoted too.`, `single quotes`
   'Keys can be quoted too.': "Useful if you want to put a ':' in your key."
-  # ПРЕДУПРЕЖДЕНИЕ: У `bash` нет простых средств доступа к `single quotes`
   single quotes: 'have ''one'' escape pattern'
   # ПРЕДУПРЕЖДЕНИЕ: GitHub корректно распознаёт и устанавливает
   #                 `env.double quotes`.  Однако, переменные окружения
@@ -149,8 +150,8 @@ jobs:
         run: |
           "key=$env:key"
           ${{ env.printenv-grep-E }}
-          "Keys can be quoted too.=$env:Keys can be quoted too."
-          "single quotes=$env:single quotes"
+          "Keys can be quoted too.=${env:Keys can be quoted too.}"
+          "single quotes=${env:single quotes}"
 
       - if: ${{ matrix.platform == 'win32' }}
         shell: cmd
