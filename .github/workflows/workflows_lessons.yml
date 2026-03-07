@@ -292,7 +292,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      fail-fast: false
+      fail-fast: true
 
       matrix:
         os: ${{ fromJSON(vars.MATRIX_OSs) }}
@@ -362,8 +362,8 @@ jobs:
         shell: bash
         run: |
           echo "env.no is ${{ case(!env.no, 'false', 'true') }}"
-          # echo "fromJSON(env.no)=${{ fromJSON(env.no) }}"
-      #    echo "env.yes is ${{ case(!env.yes, 'false', 'true') }}"
+          # echo "fromJSON(env.no)=$ ## {{ fromJSON(env.no) }}"
+          echo "env.yes is ${{ case(!env.yes, 'false', 'true') }}"
       #    echo "fromJSON(env.yes)=${{ fromJSON(env.yes) }}"
       #    echo "env.not_enclosed is
       #            ${{ case(!env.not_enclosed, 'false', 'true') }}"
