@@ -59,8 +59,7 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
         include:
-          - os: >-
-              ${{ case(${{ fromJSON(vars.DISABLE_MACOS) }}, "", macos-latest) }}
+          - os: ${{ case(fromJSON(vars.DISABLE_MACOS), '', 'macos-latest') }}
             platform: "darwin"
           - os: ubuntu-latest
             platform: "linux"
