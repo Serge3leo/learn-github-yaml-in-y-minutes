@@ -1,7 +1,7 @@
 ---
 # vim:set sw=2 ts=8 et fileencoding=utf8:
 # SPDX-License-Identifier: BSD-2-Clause
-# SPDX-FileCopyrightText: 2025 Сергей Леонтьев (leo@sai.msu.ru)
+# SPDX-FileCopyrightText: 2026 Сергей Леонтьев (leo@sai.msu.ru)
 
 name: Workflows Lessons by Learn YAML in Y minutes
 
@@ -30,6 +30,7 @@ env:
   a_number_value: 100
   scientific_notation: 1e+12
   hex_notation: 0x123   # evaluates to 291
+  # ПРЕДУПРЕЖДЕНИЕ: GitHub не поддерживает восьмеричные целые
   octal_notation: 0123  # evaluates to 83
   # Число 1 будет интерпретировано как число, а не как логический тип. Если
   # необходимо чтобы значение было интерпретировано как логическое, необходимо
@@ -49,6 +50,7 @@ env:
   # yamllint disable-line rule:truthy
   not_enclosed: yes  # evaluates to "not_enclosed": true
   enclosed: "yes"    # evaluates to "enclosed": yes
+  # TODO: XXX: Не уверен за GitHub
 
   # Обратите внимание что строки используются без кавычек, но могут и с
   # кавычками.
@@ -67,6 +69,7 @@ env:
   # UTF-8/16/32 characters need to be encoded
   # ПРЕДУПРЕЖДЕНИЕ: GitHub не распознаёт и не декодирует esc-последовательности
   Superscript two: \u00B2
+  Superscript two quote: "\u00B2"
   Superscript two UTF-8: ²
 
   # Special characters must be enclosed in single or double quotes
@@ -309,7 +312,8 @@ jobs:
         env -0 | grep -E -z "^(scientific_notation)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(hex_notation|octal_notation)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(boolean|null_value)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(another_null_value|spaces)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(another_null_value)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(key with spaces)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(no|yes|not_enclosed|enclosed)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(however)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(Ключ заключенный в кавычки[.])=" | tr "\0" "\n"
