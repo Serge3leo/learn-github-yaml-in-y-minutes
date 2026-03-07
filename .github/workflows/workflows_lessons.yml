@@ -160,6 +160,7 @@ jobs:
           echo "double quotes=$(env | sed -n '/^double quotes=/s///p')"
           echo "literal_block=$literal_block"
           type printenv
+          printenv --version
 
       - shell: pwsh
         run: |
@@ -170,6 +171,7 @@ jobs:
           "double quotes=${env:double quotes}"
           "literal_block=$env:literal_block"
           get-command printenv
+          printenv --version
 
       - if: ${{ matrix.platform == 'win32' }}
         shell: cmd
@@ -181,3 +183,4 @@ jobs:
           echo "double quotes=%double quotes%"
           echo "literal_block=%literal_block%"
           where printenv
+          printenv --version
