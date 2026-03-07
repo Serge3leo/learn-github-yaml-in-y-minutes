@@ -239,13 +239,15 @@ env:
   # Unexpected tag 'tag:yaml.org,2002:timestamp'
   # date_explicit: !!timestamp 2002-12-14
 
-  # The !!binary tag indicates that a string is actually a base64-encoded
-  # representation of a binary blob.
-  gif_file: !!binary |
-    R0lGODlhDAAMAIQAAP//9/X17unp5WZmZgAAAOfn515eXvPz7Y6OjuDg4J+fn5
-    OTk6enp56enmlpaWNjY6Ojo4SEhP/++f/++f/++f/++f/++f/++f/++f/++f/+
-    +f/++f/++f/++f/++f/++SH+Dk1hZGUgd2l0aCBHSU1QACwAAAAADAAMAAAFLC
-    AgjoEwnuNAFOhpEMTRiggcz4BNJHrv/zCFcLiwMWYNG84BwwEeECcgggoBADs=
+  # The scalar style 'Literal' on line 244 and column 13 is not valid with the
+  # tag 'tag:yaml.org,2002:binary'
+  # # The !!binary tag indicates that a string is actually a base64-encoded
+  # # representation of a binary blob.
+  # gif_file: !!binary |
+  #   R0lGODlhDAAMAIQAAP//9/X17unp5WZmZgAAAOfn515eXvPz7Y6OjuDg4J+fn5
+  #   OTk6enp56enmlpaWNjY6Ojo4SEhP/++f/++f/++f/++f/++f/++f/++f/++f/+
+  #   +f/++f/++f/++f/++f/++SH+Dk1hZGUgd2l0aCBHSU1QACwAAAAADAAMAAAFLC
+  #   AgjoEwnuNAFOhpEMTRiggcz4BNJHrv/zCFcLiwMWYNG84BwwEeECcgggoBADs=
 
 jobs:
   build:
@@ -291,7 +293,6 @@ jobs:
         env -0 | grep -E -z "^(datetime_canonical)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(datetime_space_separated_.*)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(date_implicit)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(gif_file)=" | tr "\0" "\n"
         echo "---"
 
       unimplemented-part: >
@@ -305,6 +306,7 @@ jobs:
         env -0 | grep -E -z "^(python_complex_number)=" | tr "\0" "\n"
         env -0 | grep -E -z "Fifty Seven" | tr "\0" "\n"
         env -0 | grep -E -z "^(date_explicit)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(gif_file)=" | tr "\0" "\n"
 
         env -0 | grep -E -z "item1.*item2.*item3" | tr "\0" "\n"
 
