@@ -176,9 +176,8 @@ env:
   # Anchors identified by & character which define the value.
   # Aliases identified by * character which acts as "see above" command.
   # Both of these keys will have the same value:
-  # anchored_content: &anchor_name This string will appear as the value of two
-  # keys.
-  anchored_content: &anchor_name string will appear as the value of two keys.
+  anchored_content: &anchor_name This string will appear as the value of two
+    keys.
   other_anchor: *anchor_name
 
   # (Line: 185, Col: 9): A mapping was not expected
