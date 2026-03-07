@@ -201,7 +201,22 @@ env:
 
   # foo name won't be changed and it will be: John. On the other hand, bar's
   # name will be changed to the base one: Everyone has same name
-  tail: tail
+
+  # YAML also has tags, which you can use to explicitly declare types.
+  # Syntax: !![typeName] [value]
+  explicit_boolean: !!bool true
+  explicit_integer: !!int 42
+  explicit_float: !!float -42.24
+  explicit_string: !!str 0.5
+  explicit_datetime: !!timestamp 2022-11-17 12:34:56.78 +9
+  explicit_null: !!null null
+
+  # could not determine a constructor for the tag
+  # 'tag:yaml.org,2002:python/complex' in
+  # ".github/workflows/workflows_lessons.yml", line 216, column 26
+  # # Some parsers implement language specific tags, like this one for Python's
+  # # complex number type.
+  # python_complex_number: !!python/complex 1+2j
 
 jobs:
   build:
@@ -240,6 +255,11 @@ jobs:
         env -0 | grep -E -z "^(literal_keep|block_keep)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(0\.25)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(anchored_content|other_anchor)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_boolean)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_integer|explicit_float)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_string)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_datetime)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_null)=" | tr "\0" "\n"
         echo "---"
 
       unimplemented-part: >
@@ -249,13 +269,8 @@ jobs:
         env -0 | grep -E -z "^(a_sequence|json_map|json_seq)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(and quotes are optional)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(base|foo|bar)=" | tr "\0" "\n"
-
-        env -0 | grep -E -z "^(explicit_boolean)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(explicit_integer|explicit_float)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(explicit_string)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(explicit_datetime)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(explicit_null)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(python_complex_number)=" | tr "\0" "\n"
+
         env -0 | grep -E -z "Fifty Seven" | tr "\0" "\n"
         env -0 | grep -E -z "^(datetime_canonical)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(datetime_space_separated_.*)=" | tr "\0" "\n"
