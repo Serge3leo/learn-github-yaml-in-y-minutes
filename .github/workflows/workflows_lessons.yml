@@ -12,6 +12,15 @@ on:  # yamllint disable-line rule:truthy
     branches: ["main"]
 
 env:
+  # https://learnxinyminutes.com/yaml/
+
+  # Comments in YAML look like this.
+  # YAML supports single-line comments.
+
+  ################
+  # SCALAR TYPES #
+  ################
+
   # Our root object (which continues for the entire document) will be a map,
   # which is equivalent to a dictionary, hash or object in other languages.
   key: value
@@ -103,6 +112,35 @@ env:
     time, all newlines will be replaced with a single space and
     trailing blank line being kept.
 
+  ####################
+  # COLLECTION TYPES #
+  ####################
+
+  # Nesting uses indentation. 2 space indent is preferred (but not required).
+  a_nested_map:
+    key: value
+    another_key: Another Value
+    another_nested_map:
+      hello: hello
+
+  # Maps don't have to have string keys.
+  0.25: a float key
+
+  # Keys can also be complex, like multi-line objects
+  # We use ? followed by a space to indicate the start of a complex key.
+  ? |
+    This is a key
+    that has multiple lines
+  : and this is its value
+
+  # YAML also allows mapping between sequences with the complex key syntax
+  # Some language parsers might complain
+  # An example
+  ? - Manchester United
+    - Real Madrid
+  : [2001-01-01, 2002-02-02]
+  # original: `: [ 2001-01-01, 2002-02-02 ]`
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -138,7 +176,27 @@ jobs:
         env -0 | grep -E -z "^(literal_block|folded_style)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(literal_strip|block_strip)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(literal_keep|block_keep)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(a_nested_map|0.25)=" | tr "\0" "\n"
+        env -0 | grep -E -z "This is a key" | tr "\0" "\n"
+        env -0 | grep -E -z "Manchester United" | tr "\0" "\n"
         echo "---"
+
+      unimplemented-part: >
+        env -0 | grep -E -z "^(a_sequence|json_map|json_seq)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(and quotes are optional)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(anchored_content|other_anchor)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(base|foo|bar)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_boolean)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_integer|explicit_float)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_string)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_datetime)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_null)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(python_complex_number)=" | tr "\0" "\n"
+        env -0 | grep -E -z "Fifty Seven" | tr "\0" "\n"
+        env -0 | grep -E -z "^(datetime_canonical)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(datetime_space_separated_.*)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(date_implicit|date_explicit)=" | tr "\0" "\n"
+        env -0 | grep -E -z "item1.*item2.*item3" | tr "\0" "\n"
 
     steps:
       - uses: actions/checkout@v4
