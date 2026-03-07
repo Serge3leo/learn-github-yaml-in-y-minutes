@@ -116,12 +116,12 @@ env:
   # COLLECTION TYPES #
   ####################
 
-  # Nesting uses indentation. 2 space indent is preferred (but not required).
-  a_nested_map:
-    key: value
-    another_key: Another Value
-    another_nested_map:
-      hello: hello
+  # # Nesting uses indentation. 2 space indent is preferred (but not required).
+  # a_nested_map:
+  #   key: value
+  #   another_key: Another Value
+  #   another_nested_map:
+  #     hello: hello
 
   # Maps don't have to have string keys.
   0.25: a float key
