@@ -27,8 +27,10 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
         include:
+          - os: macos-latest
+            platform: "darwin"
           - os: ubuntu-latest
             platform: "linux"
           - os: windows-latest
@@ -61,7 +63,8 @@ jobs:
           "hex_notation=$hex_notation"
           "octal_notation=$octal_notation"
 
-      - shell: cmd
+      - if: ${{ matrix.platform == 'win32' }}
+        shell: cmd
         run: |
           echo "key=%key%"
           echo "another_key=%another_key%"
