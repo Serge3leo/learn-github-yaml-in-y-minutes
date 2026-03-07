@@ -1,0 +1,365 @@
+---
+# vim:set sw=2 ts=8 et fileencoding=utf8:
+# SPDX-License-Identifier: BSD-2-Clause
+# SPDX-FileCopyrightText: 2025 Сергей Леонтьев (leo@sai.msu.ru)
+
+name: Workflows Lessons by Learn YAML in Y minutes
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  # https://learnxinyminutes.com/yaml/
+
+  # Comments in YAML look like this.
+  # YAML supports single-line comments.
+
+  ################
+  # SCALAR TYPES #
+  ################
+
+  # Our root object (which continues for the entire document) will be a map,
+  # which is equivalent to a dictionary, hash or object in other languages.
+  key: value
+  another_key: Another value goes here.
+  a_number_value: 100
+  scientific_notation: 1e+12
+  hex_notation: 0x123   # evaluates to 291
+  octal_notation: 0123  # evaluates to 83
+  # The number 1 will be interpreted as a number, not a boolean.
+  # If you want it to be interpreted as a boolean, use true.
+  boolean: true
+  null_value: null
+  another_null_value: ~
+  key with spaces: value
+
+  # Yes and No (doesn't matter the case) will be evaluated to boolean
+  # true and false values respectively.
+  # To use the actual value use single or double quotes.
+  # yamllint disable-line rule:truthy
+  no: no            # evaluates to "no": false
+  # yamllint disable-line rule:truthy
+  yes: No           # evaluates to "yes": false
+  # yamllint disable-line rule:truthy
+  not_enclosed: yes  # evaluates to "not_enclosed": true
+  enclosed: "yes"    # evaluates to "enclosed": yes
+
+  # Notice that strings don't need to be quoted. However, they can be.
+  however: 'A string, enclosed in quotes.'
+  # ПРЕДУПРЕЖДЕНИЕ: `PowerShell` и `bash` требуют особенного способа доступа к
+  #                 `Keys can be quoted too.`, `single quotes`
+  'Keys can be quoted too.': "Useful if you want to put a ':' in your key."
+  single quotes: 'have ''one'' escape pattern'
+  # ПРЕДУПРЕЖДЕНИЕ: GitHub корректно распознаёт и устанавливает
+  #                 `env.double quotes`.  Однако, переменные окружения
+  #                 обрезаются по символу `\0`.
+  double quotes: "have many: \", \0, \t, \u263A, \x0d\x0a == \r\n, and more."
+  # UTF-8/16/32 characters need to be encoded
+  # ПРЕДУПРЕЖДЕНИЕ: GitHub не распознаёт и не декодирует esc-последовательности
+  Superscript two: \u00B2
+  Superscript two UTF-8: ²
+
+  # Special characters must be enclosed in single or double quotes
+  special_characters: "[ John ] & { Jane } - <Doe>"
+
+
+  # Multiple-line strings can be written either as a 'literal block' (using |),
+  # or a 'folded block' (using '>').  Literal block turn every newline within
+  # the string into a literal newline (\n).  Folded block removes newlines
+  # within the string.
+  # ПРЕДУПРЕЖДЕНИЕ: `printenv` неприменим, следует использовать:
+  #                 - `env -0` (вариант `printenv -0` linux и windows);
+  #                 - запись в `GITHUB_ENV` тоже непроста.
+  # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#multiline-strings
+  literal_block: |
+    This entire block of text will be the value of the 'literal_block' key,
+    with line breaks being preserved.
+
+    The literal continues until de-dented, and the leading indentation is
+    stripped.
+
+        Any lines that are 'more-indented' keep the rest of their indentation -
+        these lines will be indented by 4 spaces.
+  folded_style: >
+    This entire block of text will be the value of 'folded_style', but this
+    time, all newlines will be replaced with a single space.
+
+    Blank lines, like above, are converted to a newline character.
+
+        'More-indented' lines keep their newlines, too -
+        this text will appear over two lines.
+
+  # |- and >- removes the trailing blank lines (also called literal/block
+  # "strip")
+  literal_strip: |-
+    This entire block of text will be the value of the 'literal_strip' key,
+    with trailing blank line being stripped.
+  block_strip: >-
+    This entire block of text will be the value of 'block_strip', but this
+    time, all newlines will be replaced with a single space and
+    trailing blank line being stripped.
+
+  # |+ and >+ keeps trailing blank lines (also called literal/block "keep")
+  literal_keep: |+
+    This entire block of text will be the value of the 'literal_keep' key,
+    with trailing blank line being kept.
+
+  block_keep: >+
+    This entire block of text will be the value of 'block_keep', but this
+    time, all newlines will be replaced with a single space and
+    trailing blank line being kept.
+
+  ####################
+  # COLLECTION TYPES #
+  ####################
+
+  # (Line: 121, Col: 5): A mapping was not expected
+  # # Nesting uses indentation. 2 space indent is preferred (but not required).
+  # a_nested_map:
+  #   key: value
+  #   another_key: Another Value
+  #   another_nested_map:
+  #     hello: hello
+
+  # Maps don't have to have string keys.
+  0.25: a float key
+
+  # (Line: 26, Col: 3): Non-scalar mapping key is not supported
+  # # Keys can also be complex, like multi-line objects
+  # # We use ? followed by a space to indicate the start of a complex key.
+  # ? |
+  #   This is a key
+  #   that has multiple lines
+  # : and this is its value
+
+  # (Line: 26, Col: 3): Non-scalar mapping key is not supported
+  # # YAML also allows mapping between sequences with the complex key syntax
+  # # Some language parsers might complain
+  # # An example
+  # ? - Manchester United
+  #   - Real Madrid
+  # : [2001-01-01, 2002-02-02]
+
+  # (Line: 148, Col: 5): A sequence was not expected
+  # # Sequences (equivalent to lists or arrays) look like this
+  # # (note that the '-' counts as indentation):
+  # a_sequence:
+  #   - Item 1
+  #   - Item 2
+  #   - 0.5  # sequences can contain disparate types.
+  #   - Item 4
+  #   - key: value
+  #     another_key: another_value
+  #   - - This is a sequence
+  #     - inside another sequence
+  #   - - - Nested sequence indicators
+  #       - can be collapsed
+
+  # (Line: 161, Col: 13): A mapping was not expected,
+  # # Since YAML is a superset of JSON, you can also write JSON-style maps and
+  # # sequences:
+  # json_map: {"key": "value"}
+  # # (Line: 162, Col: 13): A sequence was not expected
+  # json_seq: [3, 2, 1, "takeoff"]
+  # # (Line: 163, Col: 28): A mapping was not expected
+  # and quotes are optional: {key: [3, 2, 1, takeoff]}
+
+  #######################
+  # EXTRA YAML FEATURES #
+  #######################
+
+  # YAML also has a handy feature called 'anchors', which let you easily
+  # duplicate content across your document.
+  # Anchors identified by & character which define the value.
+  # Aliases identified by * character which acts as "see above" command.
+  # Both of these keys will have the same value:
+  anchored_content: &anchor_name This string will appear as the value of two
+    keys.
+  other_anchor: *anchor_name
+
+  # (Line: 185, Col: 9): A mapping was not expected
+  # # Anchors can be used to duplicate/inherit properties
+  # base: &base
+  #   name: Everyone has same name
+
+  # # The expression << is called 'Merge Key Language-Independent Type'. It is
+  # # used to indicate that all the keys of one or more specified maps should be
+  # # inserted into the current map.
+  # # NOTE: If key already exists alias will not be merged
+  # foo:
+  #   # (Line: 193, Col: 5): A mapping was not expected
+  #   <<: *base  # doesn't merge the anchor
+  #   age: 10
+  #   name: John
+  # bar:
+  #   # (Line: 197, Col: 5): A mapping was not expected
+  #   <<: *base  # base anchor will be merged
+  #   age: 20
+
+  # foo name won't be changed and it will be: John. On the other hand, bar's
+  # name will be changed to the base one: Everyone has same name
+
+  # YAML also has tags, which you can use to explicitly declare types.
+  # Syntax: !![typeName] [value]
+  explicit_boolean: !!bool true
+  explicit_integer: !!int 42
+  explicit_float: !!float -42.24
+  explicit_string: !!str 0.5
+  # Unexpected tag 'tag:yaml.org,2002:timestamp'
+  # explicit_datetime: !!timestamp 2022-11-17 12:34:56.78 +9
+  explicit_null: !!null null
+
+  # could not determine a constructor for the tag
+  # 'tag:yaml.org,2002:python/complex' in
+  # ".github/workflows/workflows_lessons.yml", line 216, column 26
+  # # Some parsers implement language specific tags, like this one for Python's
+  # # complex number type.
+  # python_complex_number: !!python/complex 1+2j
+
+  # could not determine a constructor for the tag
+  # 'tag:yaml.org,2002:python/tuple' in
+  # ".github/workflows/workflows_lessons.yml", line 223, column 5
+  # # We can also use yaml complex keys with language specific tags
+  # ? !!python/tuple [ 5, 7 ]
+  # : Fifty Seven
+  # # Would be {(5, 7): 'Fifty Seven'} in Python
+
+  ####################
+  # EXTRA YAML TYPES #
+  ####################
+
+  # Strings and numbers aren't the only scalars that YAML can understand.
+  # ISO-formatted date and datetime literals are also parsed.
+  datetime_canonical: 2001-12-15T02:59:43.1Z
+  datetime_space_separated_with_time_zone: 2001-12-14 21:59:43.10 -5
+  date_implicit: 2002-12-14
+  # Unexpected tag 'tag:yaml.org,2002:timestamp'
+  # date_explicit: !!timestamp 2002-12-14
+
+  # The scalar style 'Literal' on line 244 and column 13 is not valid with the
+  # tag 'tag:yaml.org,2002:binary'
+  # # The !!binary tag indicates that a string is actually a base64-encoded
+  # # representation of a binary blob.
+  # gif_file: !!binary |
+  #   R0lGODlhDAAMAIQAAP//9/X17unp5WZmZgAAAOfn515eXvPz7Y6OjuDg4J+fn5
+  #   OTk6enp56enmlpaWNjY6Ojo4SEhP/++f/++f/++f/++f/++f/++f/++f/++f/+
+  #   +f/++f/++f/++f/++f/++SH+Dk1hZGUgd2l0aCBHSU1QACwAAAAADAAMAAAFLC
+  #   AgjoEwnuNAFOhpEMTRiggcz4BNJHrv/zCFcLiwMWYNG84BwwEeECcgggoBADs=
+
+  # (Line: 254, Col: 5): A mapping was not expected
+  # # YAML also has a set type, which looks like this:
+  # set:
+  #   ? item1
+  #   ? item2
+  #   ? item3
+  # (Line: 257, Col: 7): A mapping was not expected
+  # or: {item1, item2, item3}
+
+  # (Line: 261, Col: 5): A mapping was not expected
+  # # Sets are just maps with null values; the above is equivalent to:
+  # set2:
+  #   item1: null
+  #   item2: null
+  #   item3: null
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        os: ${{ fromJSON(vars.MATRIX_OSs) }}
+        include:
+          # TODO: понять как работает matrix.os
+          # - os: macos-latest
+          #   platform: "darwin"
+          - os: ubuntu-latest
+            platform: "linux"
+          - os: windows-latest
+            platform: "win32"
+
+    env:
+      env-0-grep-E: |
+        echo "env-0-grep-E:"
+        env -0 | grep -E -z "^(another_key|a_number_value)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(scientific_notation)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(hex_notation|octal_notation)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(boolean|null_value)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(another_null_value|spaces)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(no|yes|not_enclosed|enclosed)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(however)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(Keys can be quoted too[.])=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(single quotes|double quotes)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(Superscript two.*)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(special_characters)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(literal_block|folded_style)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(literal_strip|block_strip)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(literal_keep|block_keep)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(0\.25)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(anchored_content|other_anchor)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_boolean)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_integer|explicit_float)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_string)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_null)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(datetime_canonical)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(datetime_space_separated_.*)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(date_implicit)=" | tr "\0" "\n"
+        echo "---"
+
+      unimplemented-part: >
+        env -0 | grep -E -z "^(a_nested_map)=" | tr "\0" "\n"
+        env -0 | grep -E -z "This is a key" | tr "\0" "\n"
+        env -0 | grep -E -z "Manchester United" | tr "\0" "\n"
+        env -0 | grep -E -z "^(a_sequence|json_map|json_seq)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(and quotes are optional)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(base|foo|bar)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(explicit_datetime)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(python_complex_number)=" | tr "\0" "\n"
+        env -0 | grep -E -z "Fifty Seven" | tr "\0" "\n"
+        env -0 | grep -E -z "^(date_explicit)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(gif_file)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(set|or|set2)=" | tr "\0" "\n"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint
+        if: ${{ matrix.platform != 'win32' }}
+        run: |
+          python -m pip install yamllint
+          python -m yamllint --list-file .
+          python -m yamllint .
+
+      - shell: bash
+        run: |
+          echo "key=$key"
+          ${{ env.env-0-grep-E }}
+          echo "Keys can be quoted too.=$(
+                  env | sed -n '/^Keys can be quoted too\.=/s///p')"
+          echo "single quotes=$(env | sed -n '/^single quotes=/s///p')"
+          echo "double quotes=$(env | sed -n '/^double quotes=/s///p')"
+          echo "literal_block=$literal_block"
+
+      - shell: pwsh
+        run: |
+          "key=$env:key"
+          ${{ env.env-0-grep-E }}
+          "Keys can be quoted too.=${env:Keys can be quoted too.}"
+          "single quotes=${env:single quotes}"
+          "double quotes=${env:double quotes}"
+          "literal_block=$env:literal_block"
+
+      - if: ${{ matrix.platform == 'win32' }}
+        shell: cmd
+        run: |
+          echo "key=%key%"
+          ${{ env.env-0-grep-E }}
+          echo "Keys can be quoted too.=%Keys can be quoted too.%"
+          echo "single quotes=%single quotes%"
+          echo "double quotes=%double quotes%"
+          echo "literal_block=%literal_block%"
