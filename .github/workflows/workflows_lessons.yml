@@ -42,9 +42,12 @@ env:
   however: 'A string, enclosed in quotes.'
   'Keys can be quoted too.': "Useful if you want to put a ':' in your key."
   single quotes: 'have ''one'' escape pattern'
+  # WARNING: GitHub корректно распознаёт и устанавливает `env.double quotes`.
+  #          Однако, переменные окружения обрезаются по символу `\0`.
   double quotes: "have many: \", \0, \t, \u263A, \x0d\x0a == \r\n, and more."
   # UTF-8/16/32 characters need to be encoded
   Superscript two: \u00B2
+  Superscript two UTF-8: ²
 
   # Special characters must be enclosed in single or double quotes
   special_characters: "[ John ] & { Jane } - <Doe>"
@@ -59,8 +62,9 @@ jobs:
       matrix:
         os: ${{ fromJSON(vars.MATRIX_OSs) }}
         include:
-          - os: macos-latest
-            platform: "darwin"
+          # TODO: понять как работает matrix.os
+          # - os: macos-latest
+          #   platform: "darwin"
           - os: ubuntu-latest
             platform: "linux"
           - os: windows-latest
@@ -68,6 +72,7 @@ jobs:
 
     env:
       printenv-grep-E: |
+        echo "printenv-grep-E:"
         printenv | grep -E "another_key|a_number_value|scientific_notation"
         printenv | grep -E "hex_notation|octal_notation"
         printenv | grep -E "boolean|null_value|another_null_value|spaces"
@@ -75,7 +80,7 @@ jobs:
         printenv | grep -E "however|Keys can be quoted too|single quotes"
         printenv | grep -E "double quotes"
         printenv | grep -E "Superscript two|special_characters"
-
+        echo "---"
 
     steps:
       - uses: actions/checkout@v4
@@ -91,14 +96,17 @@ jobs:
         run: |
           echo "key=$key"
           ${{ env.printenv-grep-E }}
+          echo "single quotes=$single quotes"
 
       - shell: pwsh
         run: |
           "key=$env:key"
           ${{ env.printenv-grep-E }}
+          "single quotes=$env:single quotes"
 
       - if: ${{ matrix.platform == 'win32' }}
         shell: cmd
         run: |
           echo "key=%key%"
           ${{ env.printenv-grep-E }}
+          echo "single quotes=%single quotes%"
