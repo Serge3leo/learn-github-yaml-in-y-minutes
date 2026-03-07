@@ -219,6 +219,33 @@ env:
   # # complex number type.
   # python_complex_number: !!python/complex 1+2j
 
+  # could not determine a constructor for the tag
+  # 'tag:yaml.org,2002:python/tuple' in
+  # ".github/workflows/workflows_lessons.yml", line 223, column 5
+  # # We can also use yaml complex keys with language specific tags
+  # ? !!python/tuple [ 5, 7 ]
+  # : Fifty Seven
+  # # Would be {(5, 7): 'Fifty Seven'} in Python
+
+  ####################
+  # EXTRA YAML TYPES #
+  ####################
+
+  # Strings and numbers aren't the only scalars that YAML can understand.
+  # ISO-formatted date and datetime literals are also parsed.
+  datetime_canonical: 2001-12-15T02:59:43.1Z
+  datetime_space_separated_with_time_zone: 2001-12-14 21:59:43.10 -5
+  date_implicit: 2002-12-14
+  date_explicit: !!timestamp 2002-12-14
+
+  # The !!binary tag indicates that a string is actually a base64-encoded
+  # representation of a binary blob.
+  gif_file: !!binary |
+    R0lGODlhDAAMAIQAAP//9/X17unp5WZmZgAAAOfn515eXvPz7Y6OjuDg4J+fn5
+    OTk6enp56enmlpaWNjY6Ojo4SEhP/++f/++f/++f/++f/++f/++f/++f/++f/+
+    +f/++f/++f/++f/++f/++SH+Dk1hZGUgd2l0aCBHSU1QACwAAAAADAAMAAAFLC
+    AgjoEwnuNAFOhpEMTRiggcz4BNJHrv/zCFcLiwMWYNG84BwwEeECcgggoBADs=
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -260,6 +287,10 @@ jobs:
         env -0 | grep -E -z "^(explicit_integer|explicit_float)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(explicit_string)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(explicit_null)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(datetime_canonical)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(datetime_space_separated_.*)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(date_implicit|date_explicit)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(gif_file)=" | tr "\0" "\n"
         echo "---"
 
       unimplemented-part: >
@@ -273,9 +304,6 @@ jobs:
         env -0 | grep -E -z "^(python_complex_number)=" | tr "\0" "\n"
 
         env -0 | grep -E -z "Fifty Seven" | tr "\0" "\n"
-        env -0 | grep -E -z "^(datetime_canonical)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(datetime_space_separated_.*)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(date_implicit|date_explicit)=" | tr "\0" "\n"
         env -0 | grep -E -z "item1.*item2.*item3" | tr "\0" "\n"
 
     steps:
