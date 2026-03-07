@@ -62,7 +62,7 @@ env:
   # the string into a literal newline (\n).  Folded block removes newlines
   # within the string.
   # ПРЕДУПРЕЖДЕНИЕ: `printenv` неприменим, следует использовать:
-  #                 - `env -0` (вариант `printenv -0`, TODO macos);
+  #                 - `env -0` (вариант `printenv -0` linux и windows);
   #                 - запись в `GITHUB_ENV` тоже непроста.
   # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#multiline-strings
   literal_block: |
@@ -114,16 +114,16 @@ jobs:
         os: ${{ fromJSON(vars.MATRIX_OSs) }}
         include:
           # TODO: понять как работает matrix.os
-          - os: macos-latest
-            platform: "darwin"
+          # - os: macos-latest
+          #   platform: "darwin"
           - os: ubuntu-latest
             platform: "linux"
           - os: windows-latest
             platform: "win32"
 
     env:
-      printenv-grep-E: |
-        echo "printenv-grep-E:"
+      env-0-grep-E: |
+        echo "env-0-grep-E:"
         env -0 | grep -E -z "^(another_key|a_number_value)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(scientific_notation)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(hex_notation|octal_notation)=" | tr "\0" "\n"
@@ -153,34 +153,28 @@ jobs:
       - shell: bash
         run: |
           echo "key=$key"
-          ${{ env.printenv-grep-E }}
+          ${{ env.env-0-grep-E }}
           echo "Keys can be quoted too.=$(
                   env | sed -n '/^Keys can be quoted too\.=/s///p')"
           echo "single quotes=$(env | sed -n '/^single quotes=/s///p')"
           echo "double quotes=$(env | sed -n '/^double quotes=/s///p')"
           echo "literal_block=$literal_block"
-          type printenv
-          printenv --version
 
       - shell: pwsh
         run: |
           "key=$env:key"
-          ${{ env.printenv-grep-E }}
+          ${{ env.env-0-grep-E }}
           "Keys can be quoted too.=${env:Keys can be quoted too.}"
           "single quotes=${env:single quotes}"
           "double quotes=${env:double quotes}"
           "literal_block=$env:literal_block"
-          get-command printenv
-          printenv --version
 
       - if: ${{ matrix.platform == 'win32' }}
         shell: cmd
         run: |
           echo "key=%key%"
-          ${{ env.printenv-grep-E }}
+          ${{ env.env-0-grep-E }}
           echo "Keys can be quoted too.=%Keys can be quoted too.%"
           echo "single quotes=%single quotes%"
           echo "double quotes=%double quotes%"
           echo "literal_block=%literal_block%"
-          where printenv
-          printenv --version
