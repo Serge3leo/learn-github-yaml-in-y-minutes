@@ -61,7 +61,10 @@ env:
   # or a 'folded block' (using '>').  Literal block turn every newline within
   # the string into a literal newline (\n).  Folded block removes newlines
   # within the string.
-  # ПРЕДУПРЕЖДЕНИЕ: `printenv` неприменим, следует использовать `env -0`
+  # ПРЕДУПРЕЖДЕНИЕ: `printenv` неприменим, следует использовать:
+  #                 - `env -0` (вариант `printenv -0`, TODO macos);
+  #                 - запись в `GITHUB_ENV` тоже непроста.
+  # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#multiline-strings
   literal_block: |
     This entire block of text will be the value of the 'literal_block' key,
     with line breaks being preserved.
@@ -111,8 +114,8 @@ jobs:
         os: ${{ fromJSON(vars.MATRIX_OSs) }}
         include:
           # TODO: понять как работает matrix.os
-          # - os: macos-latest
-          #   platform: "darwin"
+          - os: macos-latest
+            platform: "darwin"
           - os: ubuntu-latest
             platform: "linux"
           - os: windows-latest
@@ -135,7 +138,7 @@ jobs:
         env -0 | grep -E -z "^(literal_block|folded_style)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(literal_strip|block_strip)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(literal_keep|block_keep)=" | tr "\0" "\n"
-        echo ---
+        echo "---"
 
     steps:
       - uses: actions/checkout@v4
@@ -156,16 +159,7 @@ jobs:
           echo "single quotes=$(env | sed -n '/^single quotes=/s///p')"
           echo "double quotes=$(env | sed -n '/^double quotes=/s///p')"
           echo "literal_block=$literal_block"
-          TEST_PRINTENV_B="Value printenv" ; export TEST_PRINTENV_B
-          echo "$TEST_PRINTENV_B"
-          # printenv >> $GITHUB_ENV
-          # env -0 | tr "\0" "\n" >> $GITHUB_ENV
-
-      - shell: bash
-        run: |
-          ${{ env.printenv-grep-E }}
-          echo "literal_block=$literal_block"
-          echo "TEST_PRINTENV_B=$TEST_PRINTENV_B"
+          type printenv
 
       - shell: pwsh
         run: |
@@ -175,15 +169,7 @@ jobs:
           "single quotes=${env:single quotes}"
           "double quotes=${env:double quotes}"
           "literal_block=$env:literal_block"
-          $env:TEST_PRINTENV_P="Value printenv"
-          # printenv >> $env:GITHUB_ENV
-          # env -0 | tr "\0" "\n" >> $GITHUB_ENV
-
-      - shell: pwsh
-        run: |
-          ${{ env.printenv-grep-E }}
-          "literal_block=$env:literal_block"
-          "TEST_PRINTENV_P=$env:TEST_PRINTENV_P"
+          get-command printenv
 
       - if: ${{ matrix.platform == 'win32' }}
         shell: cmd
@@ -194,12 +180,4 @@ jobs:
           echo "single quotes=%single quotes%"
           echo "double quotes=%double quotes%"
           echo "literal_block=%literal_block%"
-          set TEST_PRINTENV_C=Value printenv
-          rem printenv >> %GITHUB_ENV%
-          env -0 | tr "\0" "\n" >> %GITHUB_ENV%
-
-      - shell: cmd
-        run: |
-          ${{ env.printenv-grep-E }}
-          echo "literal_block=%literal_block%"
-          echo "TEST_PRINTENV_B=%TEST_PRINTENV_C%"
+          where printenv
