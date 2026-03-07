@@ -249,18 +249,21 @@ env:
   #   +f/++f/++f/++f/++f/++SH+Dk1hZGUgd2l0aCBHSU1QACwAAAAADAAMAAAFLC
   #   AgjoEwnuNAFOhpEMTRiggcz4BNJHrv/zCFcLiwMWYNG84BwwEeECcgggoBADs=
 
-  # YAML also has a set type, which looks like this:
-  set:
-    ? item1
-    ? item2
-    ? item3
-  or: {item1, item2, item3}
+  # (Line: 254, Col: 5): A mapping was not expected
+  # # YAML also has a set type, which looks like this:
+  # set:
+  #   ? item1
+  #   ? item2
+  #   ? item3
+  # (Line: 257, Col: 7): A mapping was not expected
+  # or: {item1, item2, item3}
 
-  # Sets are just maps with null values; the above is equivalent to:
-  set2:
-    item1: null
-    item2: null
-    item3: null
+  # (Line: 261, Col: 5): A mapping was not expected
+  # # Sets are just maps with null values; the above is equivalent to:
+  # set2:
+  #   item1: null
+  #   item2: null
+  #   item3: null
 
 jobs:
   build:
@@ -306,7 +309,6 @@ jobs:
         env -0 | grep -E -z "^(datetime_canonical)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(datetime_space_separated_.*)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(date_implicit)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(set|or|set2)=" | tr "\0" "\n"
         echo "---"
 
       unimplemented-part: >
@@ -321,8 +323,7 @@ jobs:
         env -0 | grep -E -z "Fifty Seven" | tr "\0" "\n"
         env -0 | grep -E -z "^(date_explicit)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(gif_file)=" | tr "\0" "\n"
-
-        env -0 | grep -E -z "item1.*item2.*item3" | tr "\0" "\n"
+        env -0 | grep -E -z "^(set|or|set2)=" | tr "\0" "\n"
 
     steps:
       - uses: actions/checkout@v4
