@@ -45,13 +45,27 @@ jobs:
 
       - shell: bash
         run: |
-          printenv
+          echo "key=$key"
+          echo "another_key=$another_key"
+          echo "a_number_value=$a_number_value"
+          echo "scientific_notation=$scientific_notation"
+          echo "hex_notation=$hex_notation"
+          echo "octal_notation=$octal_notation"
 
       - shell: pwsh
         run: |
-          $env
+          "key=$key"
+          "another_key=$another_key"
+          "a_number_value=$a_number_value"
+          "scientific_notation=$scientific_notation"
+          "hex_notation=$hex_notation"
+          "octal_notation=$octal_notation"
 
-      - if: ${{ matrix.platform == 'win32' }}
-        shell: cmd
+      - shell: cmd
         run: |
-          set
+          echo "key=%key%"
+          echo "another_key=%another_key%"
+          echo "a_number_value=%a_number_value%"
+          echo "scientific_notation=%scientific_notation%"
+          echo "hex_notation=%hex_notation%"
+          echo "octal_notation=%octal_notation%"
