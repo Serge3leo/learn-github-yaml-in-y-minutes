@@ -20,6 +20,34 @@ env:
   scientific_notation: 1e+12
   hex_notation: 0x123   # evaluates to 291
   octal_notation: 0123  # evaluates to 83
+  # The number 1 will be interpreted as a number, not a boolean.
+  # If you want it to be interpreted as a boolean, use true.
+  boolean: true
+  null_value: null
+  another_null_value: ~
+  key with spaces: value
+
+  # Yes and No (doesn't matter the case) will be evaluated to boolean
+  # true and false values respectively.
+  # To use the actual value use single or double quotes.
+  # yamllint disable-line rule:truthy
+  no: no            # evaluates to "no": false
+  # yamllint disable-line rule:truthy
+  yes: No           # evaluates to "yes": false
+  # yamllint disable-line rule:truthy
+  not_enclosed: yes  # evaluates to "not_enclosed": true
+  enclosed: "yes"    # evaluates to "enclosed": yes
+
+  # Notice that strings don't need to be quoted. However, they can be.
+  however: 'A string, enclosed in quotes.'
+  'Keys can be quoted too.': "Useful if you want to put a ':' in your key."
+  single quotes: 'have ''one'' escape pattern'
+  double quotes: "have many: \", \0, \t, \u263A, \x0d\x0a == \r\n, and more."
+  # UTF-8/16/32 characters need to be encoded
+  Superscript two: \u00B2
+
+  # Special characters must be enclosed in single or double quotes
+  special_characters: "[ John ] & { Jane } - <Doe>"
 
 jobs:
   build:
@@ -39,34 +67,15 @@ jobs:
             platform: "win32"
 
     env:
-      # The number 1 will be interpreted as a number, not a boolean.
-      # If you want it to be interpreted as a boolean, use true.
-      boolean: true
-      null_value: null
-      another_null_value: ~
-      key with spaces: value
+      printenv-grep-E: |
+        printenv | grep -E "another_key|a_number_value|scientific_notation"
+        printenv | grep -E "hex_notation|octal_notation"
+        printenv | grep -E "boolean|null_value|another_null_value|spaces"
+        printenv | grep -E "no=|yes=|not_enclosed|enclosed"
+        printenv | grep -E "however|Keys can be quoted too|single quotes"
+        printenv | grep -E "double quotes"
+        printenv | grep -E "Superscript two|special_characters"
 
-      # Yes and No (doesn't matter the case) will be evaluated to boolean
-      # true and false values respectively.
-      # To use the actual value use single or double quotes.
-      # yamllint disable-line rule:truthy
-      no: no            # evaluates to "no": false
-      # yamllint disable-line rule:truthy
-      yes: No           # evaluates to "yes": false
-      # yamllint disable-line rule:truthy
-      not_enclosed: yes  # evaluates to "not_enclosed": true
-      enclosed: "yes"    # evaluates to "enclosed": yes
-
-      # Notice that strings don't need to be quoted. However, they can be.
-      however: 'A string, enclosed in quotes.'
-      'Keys can be quoted too.': "Useful if you want to put a ':' in your key."
-      single quotes: 'have ''one'' escape pattern'
-      double quotes: "have many: \", \0, \t, \u263A, \x0d\x0a == \r\n, and..."
-      # UTF-8/16/32 characters need to be encoded
-      Superscript two: \u00B2
-
-      # Special characters must be enclosed in single or double quotes
-      special_characters: "[ John ] & { Jane } - <Doe>"
 
     steps:
       - uses: actions/checkout@v4
@@ -81,33 +90,15 @@ jobs:
       - shell: bash
         run: |
           echo "key=$key"
-          printenv | grep -E "another_key|a_number_value|scientific_notation"
-          printenv | grep -E "hex_notation|octal_notation"
-          printenv | grep -E "boolean|null_value|another_null_value|spaces"
-          printenv | grep -E "no=|yes=|not_enclosed|enclosed"
-          printenv | grep -E "however|Keys can be quoted too|single quotes"
-          printenv | grep -E "double quotes"
-          printenv | grep -E "Superscript two|special_characters"
+          ${{ env.printenv-grep-E }}
 
       - shell: pwsh
         run: |
           "key=$env:key"
-          printenv | grep -E "another_key|a_number_value|scientific_notation"
-          printenv | grep -E "hex_notation|octal_notation"
-          printenv | grep -E "boolean|null_value|another_null_value|spaces"
-          printenv | grep -E "no=|yes=|not_enclosed|enclosed"
-          printenv | grep -E "however|Keys can be quoted too|single quotes"
-          printenv | grep -E "double quotes"
-          printenv | grep -E "Superscript two|special_characters"
+          ${{ env.printenv-grep-E }}
 
       - if: ${{ matrix.platform == 'win32' }}
         shell: cmd
         run: |
           echo "key=%key%"
-          printenv | grep -E "another_key|a_number_value|scientific_notation"
-          printenv | grep -E "hex_notation|octal_notation"
-          printenv | grep -E "boolean|null_value|another_null_value|spaces"
-          printenv | grep -E "no=|yes=|not_enclosed|enclosed"
-          printenv | grep -E "however|Keys can be quoted too|single quotes"
-          printenv | grep -E "double quotes"
-          printenv | grep -E "Superscript two|special_characters"
+          ${{ env.printenv-grep-E }}
