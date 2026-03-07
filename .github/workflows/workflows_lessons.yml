@@ -126,6 +126,7 @@ env:
   # Maps don't have to have string keys.
   0.25: a float key
 
+  # GitHub unimplemented TODO
   # # Keys can also be complex, like multi-line objects
   # # We use ? followed by a space to indicate the start of a complex key.
   # ? |
@@ -133,13 +134,33 @@ env:
   #   that has multiple lines
   # : and this is its value
 
+  # GitHub unimplemented TODO
   # # YAML also allows mapping between sequences with the complex key syntax
   # # Some language parsers might complain
   # # An example
   # ? - Manchester United
   #   - Real Madrid
   # : [2001-01-01, 2002-02-02]
-  # # original: `: [ 2001-01-01, 2002-02-02 ]`
+
+  # Sequences (equivalent to lists or arrays) look like this
+  # (note that the '-' counts as indentation):
+  a_sequence:
+    - Item 1
+    - Item 2
+    - 0.5  # sequences can contain disparate types.
+    - Item 4
+    - key: value
+      another_key: another_value
+    - - This is a sequence
+      - inside another sequence
+    - - - Nested sequence indicators
+        - can be collapsed
+
+  # Since YAML is a superset of JSON, you can also write JSON-style maps and
+  # sequences:
+  json_map: {"key": "value"}
+  json_seq: [3, 2, 1, "takeoff"]
+  and quotes are optional: {key: [3, 2, 1, takeoff]}
 
 jobs:
   build:
@@ -176,14 +197,16 @@ jobs:
         env -0 | grep -E -z "^(literal_block|folded_style)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(literal_strip|block_strip)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(literal_keep|block_keep)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(a_nested_map|0.25)=" | tr "\0" "\n"
-        env -0 | grep -E -z "This is a key" | tr "\0" "\n"
-        env -0 | grep -E -z "Manchester United" | tr "\0" "\n"
+        env -0 | grep -E -z "^(0\.25)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(a_sequence|json_map|json_seq)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(and quotes are optional)=" | tr "\0" "\n"
         echo "---"
 
       unimplemented-part: >
-        env -0 | grep -E -z "^(a_sequence|json_map|json_seq)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(and quotes are optional)=" | tr "\0" "\n"
+        env -0 | grep -E -z "^(a_nested_map)=" | tr "\0" "\n"
+        env -0 | grep -E -z "This is a key" | tr "\0" "\n"
+        env -0 | grep -E -z "Manchester United" | tr "\0" "\n"
+
         env -0 | grep -E -z "^(anchored_content|other_anchor)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(base|foo|bar)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(explicit_boolean)=" | tr "\0" "\n"
