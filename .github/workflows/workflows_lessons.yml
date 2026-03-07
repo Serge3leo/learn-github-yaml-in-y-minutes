@@ -57,7 +57,7 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: ${{ vars.MATRIX_OSs  }}
+        os: ${{ fromJSON(vars.MATRIX_OSs)  }}
         include:
           - os: macos-latest
             platform: "darwin"
