@@ -12,7 +12,6 @@ on:  # yamllint disable-line rule:truthy
     branches: ["main"]
 
 env:
-  # https://learnxinyminutes.com/yaml/
   # https://github.com/adambard/learnxinyminutes-docs/blob/master/ru/yaml.md
 
   # Комментарий в YAML выглядит как-то так.
@@ -62,7 +61,9 @@ env:
   # ПРЕДУПРЕЖДЕНИЕ: GitHub корректно распознаёт и устанавливает
   #                 `env.double quotes`.  Однако, переменные окружения
   #                 обрезаются по символу `\0`.
-  double quotes: "have many: \", \0, \t, \u263A, \x0d\x0a == \r\n, and more."
+  double quotes: "Содержит несколько: \", \0, \t, \u263A, \x0d\x0a == \r\n,
+    экранированных строк."
+
   # UTF-8/16/32 characters need to be encoded
   # ПРЕДУПРЕЖДЕНИЕ: GitHub не распознаёт и не декодирует esc-последовательности
   Superscript two: \u00B2
@@ -71,7 +72,8 @@ env:
   # Special characters must be enclosed in single or double quotes
   special_characters: "[ John ] & { Jane } - <Doe>"
 
-
+  # Многострочные строковые значения могут быть записаны как 'строковый блок'
+  # (используя |), или как 'сложенный блок' (используя '>').
   # Multiple-line strings can be written either as a 'literal block' (using |),
   # or a 'folded block' (using '>').  Literal block turn every newline within
   # the string into a literal newline (\n).  Folded block removes newlines
@@ -81,22 +83,22 @@ env:
   #                 - запись в `GITHUB_ENV` тоже непроста.
   # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#multiline-strings
   literal_block: |
-    This entire block of text will be the value of the 'literal_block' key,
-    with line breaks being preserved.
+    Значение всего текста в этом блоке будет присвоено ключу 'literal_block',
+    с сохранением переноса строк.
 
-    The literal continues until de-dented, and the leading indentation is
-    stripped.
+    Объявление продолжается до удаления отступа и выравнивания с ведущим
+    отступом.
 
-        Any lines that are 'more-indented' keep the rest of their indentation -
-        these lines will be indented by 4 spaces.
+        Любые строки с большим отступом сохраняют остатки своего отступа -
+        эта строка будет содержать дополнительно 4 пробела.
   folded_style: >
-    This entire block of text will be the value of 'folded_style', but this
-    time, all newlines will be replaced with a single space.
+      Весь блок этого текста будет значением 'folded_style', но в данном случае
+      все символы новой строки будут заменены пробелами.
 
-    Blank lines, like above, are converted to a newline character.
+      Пустые строки будут преобразованы в перенос строки.
 
-        'More-indented' lines keep their newlines, too -
-        this text will appear over two lines.
+          Строки с дополнительными отступами сохраняют их переносы строк -
+          этот текст появится через 2 строки.
 
   # |- and >- removes the trailing blank lines (also called literal/block
   # "strip")
@@ -118,79 +120,86 @@ env:
     time, all newlines will be replaced with a single space and
     trailing blank line being kept.
 
-  ####################
-  # COLLECTION TYPES #
-  ####################
+  ##################
+  # Типы коллекций #
+  ##################
 
   # (Line: 121, Col: 5): A mapping was not expected
-  # # Nesting uses indentation. 2 space indent is preferred (but not required).
+  # # Вложения используют отступы. Отступ в 2 пробела предпочтителен (но не
+  # # обязателен).
   # a_nested_map:
   #   key: value
   #   another_key: Another Value
   #   another_nested_map:
   #     hello: hello
 
-  # Maps don't have to have string keys.
+  # В словарях (maps) используются не только строковые значения ключей.
   0.25: a float key
 
   # (Line: 26, Col: 3): Non-scalar mapping key is not supported
-  # # Keys can also be complex, like multi-line objects
-  # # We use ? followed by a space to indicate the start of a complex key.
+  # # Ключи также могут быть сложными, например многострочными.
+  # # Мы используем ? с последующим пробелом, чтобы обозначить начало сложного
+  # # ключа.
   # ? |
-  #   This is a key
-  #   that has multiple lines
-  # : and this is its value
+  # Этот ключ
+  # который содержит несколько строк
+  # и это его значение
 
   # (Line: 26, Col: 3): Non-scalar mapping key is not supported
-  # # YAML also allows mapping between sequences with the complex key syntax
-  # # Some language parsers might complain
-  # # An example
+  # # YAML также разрешает соответствия между последовательностями со сложными
+  # # ключами
+  # # Некоторые парсеры могут выдать предупреждения или ошибку
+  # # Пример
   # ? - Manchester United
   #   - Real Madrid
   # : [2001-01-01, 2002-02-02]
 
   # (Line: 148, Col: 5): A sequence was not expected
-  # # Sequences (equivalent to lists or arrays) look like this
-  # # (note that the '-' counts as indentation):
+  # # Последовательности (эквивалент списка или массива) выглядят как-то так
+  # # (обратите внимание что знак '-' считается отступом):
   # a_sequence:
   #   - Item 1
   #   - Item 2
-  #   - 0.5  # sequences can contain disparate types.
+  #   - 0.5  # последовательности могут содержать различные типы.
   #   - Item 4
   #   - key: value
   #     another_key: another_value
-  #   - - This is a sequence
-  #     - inside another sequence
-  #   - - - Nested sequence indicators
-  #       - can be collapsed
+  #   -
+  #     - Это последовательность
+  #     - внутри другой последовательности
+  #   - - - Объявления вложенных последовательностей
+  #       - могут быть сжаты
 
   # (Line: 161, Col: 13): A mapping was not expected,
-  # # Since YAML is a superset of JSON, you can also write JSON-style maps and
-  # # sequences:
+  # # Поскольку YAML это надмножество JSON, вы можете использовать JSON-подобный
+  # # синтаксис для словарей и последовательностей:
   # json_map: {"key": "value"}
   # # (Line: 162, Col: 13): A sequence was not expected
   # json_seq: [3, 2, 1, "takeoff"]
   # # (Line: 163, Col: 28): A mapping was not expected
-  # and quotes are optional: {key: [3, 2, 1, takeoff]}
+  # в данном случае кавычки не обязательны: {key: [3, 2, 1, takeoff]}
 
-  #######################
-  # EXTRA YAML FEATURES #
-  #######################
+  ##########################
+  # Дополнительные функции #
+  ##########################
 
-  # YAML also has a handy feature called 'anchors', which let you easily
-  # duplicate content across your document.
   # Anchors identified by & character which define the value.
   # Aliases identified by * character which acts as "see above" command.
-  # Both of these keys will have the same value:
-  anchored_content: &anchor_name This string will appear as the value of two
-    keys.
+  # В YAML есть удобная система так называемых 'якорей' (anchors), которые
+  # позволяют легко дублировать содержимое внутри документа. Оба ключа в
+  # примере будут иметь одинаковые значения:
+  anchored_content: &anchor_name Эта строка будет являться значением обоих
+    ключей.
   other_anchor: *anchor_name
 
   # (Line: 185, Col: 9): A mapping was not expected
-  # # Anchors can be used to duplicate/inherit properties
+  # # Якоря могут использоваться для дублирования/наследования свойств
   # base: &base
-  #   name: Everyone has same name
+  #   name: Каждый будет иметь одинаковое имя
 
+  # # Регулярное выражение << называется ключом объединения независимо от типа
+  # # языка.  Он используется, чтобы показать что все ключи одного или более
+  # # словарей должны быть добавлены в текущий словарь.
   # # The expression << is called 'Merge Key Language-Independent Type'. It is
   # # used to indicate that all the keys of one or more specified maps should be
   # # inserted into the current map.
@@ -208,7 +217,7 @@ env:
   # foo name won't be changed and it will be: John. On the other hand, bar's
   # name will be changed to the base one: Everyone has same name
 
-  # YAML also has tags, which you can use to explicitly declare types.
+  # В YAML есть теги (tags), которые используются для явного объявления типов.
   # Syntax: !![typeName] [value]
   explicit_boolean: !!bool true
   explicit_integer: !!int 42
@@ -221,24 +230,25 @@ env:
   # could not determine a constructor for the tag
   # 'tag:yaml.org,2002:python/complex' in
   # ".github/workflows/workflows_lessons.yml", line 216, column 26
-  # # Some parsers implement language specific tags, like this one for Python's
-  # # complex number type.
+  # # В некоторых парсерах реализованы теги для конкретного языка, пример для
+  # # Python пример сложного числового типа.
   # python_complex_number: !!python/complex 1+2j
 
   # could not determine a constructor for the tag
   # 'tag:yaml.org,2002:python/tuple' in
   # ".github/workflows/workflows_lessons.yml", line 223, column 5
-  # # We can also use yaml complex keys with language specific tags
+  # # Мы можем использовать сложные ключи с включенными в них тегами из
+  # # определенного языка
   # ? !!python/tuple [ 5, 7 ]
   # : Fifty Seven
-  # # Would be {(5, 7): 'Fifty Seven'} in Python
+  # # Могло бы быть {(5, 7): 'Fifty Seven'} в Python
 
-  ####################
-  # EXTRA YAML TYPES #
-  ####################
+  #######################
+  # Дополнительные типы #
+  #######################
 
-  # Strings and numbers aren't the only scalars that YAML can understand.
-  # ISO-formatted date and datetime literals are also parsed.
+  # Строки и числа не единственные величины которые может понять YAML.
+  # YAML также поддерживает даты и время в формате ISO.
   datetime_canonical: 2001-12-15T02:59:43.1Z
   datetime_space_separated_with_time_zone: 2001-12-14 21:59:43.10 -5
   date_implicit: 2002-12-14
@@ -247,8 +257,8 @@ env:
 
   # The scalar style 'Literal' on line 244 and column 13 is not valid with the
   # tag 'tag:yaml.org,2002:binary'
-  # # The !!binary tag indicates that a string is actually a base64-encoded
-  # # representation of a binary blob.
+  # # Тег !!binary показывает что эта строка является base64-закодированным
+  # # представлением двоичного объекта.
   # gif_file: !!binary |
   #   R0lGODlhDAAMAIQAAP//9/X17unp5WZmZgAAAOfn515eXvPz7Y6OjuDg4J+fn5
   #   OTk6enp56enmlpaWNjY6Ojo4SEhP/++f/++f/++f/++f/++f/++f/++f/++f/+
@@ -256,7 +266,8 @@ env:
   #   AgjoEwnuNAFOhpEMTRiggcz4BNJHrv/zCFcLiwMWYNG84BwwEeECcgggoBADs=
 
   # (Line: 254, Col: 5): A mapping was not expected
-  # # YAML also has a set type, which looks like this:
+  # # YAML может использовать объекты типа ассоциативных массивов (set), как
+  # # представлено ниже:
   # set:
   #   ? item1
   #   ? item2
@@ -265,6 +276,8 @@ env:
   # or: {item1, item2, item3}
 
   # (Line: 261, Col: 5): A mapping was not expected
+  # # Сеты (set) являются простыми эквивалентами словарей со значениями
+  # # типа null; запись выше эквивалентна следующей:
   # # Sets are just maps with null values; the above is equivalent to:
   # set2:
   #   item1: null
