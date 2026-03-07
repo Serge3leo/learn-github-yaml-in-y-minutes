@@ -40,7 +40,7 @@ env:
 
   # Notice that strings don't need to be quoted. However, they can be.
   however: 'A string, enclosed in quotes.'
-  # ПРЕДУПРЕЖДЕНИЕ: У `PowerShell` и `bash` нет простых средств доступа к
+  # ПРЕДУПРЕЖДЕНИЕ: `PowerShell` и `bash` требуют особенного способа доступа к
   #                 `Keys can be quoted too.`, `single quotes`
   'Keys can be quoted too.': "Useful if you want to put a ':' in your key."
   single quotes: 'have ''one'' escape pattern'
@@ -120,13 +120,16 @@ jobs:
     env:
       printenv-grep-E: |
         echo "printenv-grep-E:"
-        printenv | grep -E "another_key|a_number_value|scientific_notation"
-        printenv | grep -E "hex_notation|octal_notation"
-        printenv | grep -E "boolean|null_value|another_null_value|spaces"
-        printenv | grep -E "no=|yes=|not_enclosed|enclosed"
-        printenv | grep -E "however|Keys can be quoted too|single quotes"
-        printenv | grep -E "double quotes"
-        printenv | grep -E "Superscript two|special_characters"
+        printenv | grep -E "^(another_key|a_number_value|scientific_notation)"
+        printenv | grep -E "^(hex_notation|octal_notation)"
+        printenv | grep -E "^(boolean|null_value|another_null_value|spaces)"
+        printenv | grep -E "^(no=|yes=|not_enclosed|enclosed)"
+        printenv | grep -E "^(however|Keys can be quoted too|single quotes)"
+        printenv | grep -E "^(double quotes)"
+        printenv | grep -E "^(Superscript two|special_characters)"
+        printenv | grep -E "^(literal_block|folded_style)"
+        printenv | grep -E "^(literal_strip|block_strip)"
+        printenv | grep -E "^(literal_keep|block_keep)"
         echo "---"
 
     steps:
@@ -143,8 +146,9 @@ jobs:
         run: |
           echo "key=$key"
           ${{ env.printenv-grep-E }}
-          echo $(env | sed -n '/^Keys can be quoted too\.=/s///p')
-          echo $(env | sed -n '/^single quotes=/s///p')
+          echo "Keys can be quoted too.=$(
+                  env | sed -n '/^Keys can be quoted too\.=/s///p')"
+          echo "single quotes=$(env | sed -n '/^single quotes=/s///p')"
 
       - shell: pwsh
         run: |
