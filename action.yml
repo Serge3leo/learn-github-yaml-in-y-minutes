@@ -75,7 +75,7 @@ runs:
           else
             . "${{ inputs.location }}/setvars.sh"
             env -0
-          endif
+          fi
         ) | sort -z | tr '\0' '\n' | (diff /tmp/base - || true) \
           | sed -n '/^> /s///p' >> $GITHUB_ENV
 
