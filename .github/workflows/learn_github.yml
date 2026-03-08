@@ -299,8 +299,8 @@ jobs:
         os: ${{ fromJSON(vars.MATRIX_OSs) }}
         include:
           # TODO: понять как работает matrix.os
-          # - os: macos-latest
-          #   platform: "darwin"
+          - os: macos-latest
+            platform: "darwin"
           - os: ubuntu-latest
             platform: "linux"
           - os: windows-latest

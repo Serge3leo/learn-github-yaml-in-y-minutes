@@ -57,12 +57,18 @@ runs:
     - name: Learn GitHub environments variables
       shell: bash
       run: |
+        gawk --version || echo ">>> Have gawk"
+        awk --version || echo ">>> Have awk"
+        mawk --version || echo ">>> Have mawk"
         # TODO: call setvars
         # TODO: PATH
 
         echo "LEARN_GITHUB=${{ inputs.location }}" >> $GITHUB_ENV
-        echo "${{ inputs.location }}/bin" >> $GITHUB_PATH
-        echo "${{ inputs.location }}\\bin" >> $GITHUB_PATH
+        if ${{ runner.os == 'Windows' }} ; then
+          echo "${{ inputs.location }}\\bin" >> $GITHUB_PATH
+        else
+          echo "${{ inputs.location }}/bin" >> $GITHUB_PATH
+        fi
         if ${{ fromJSON(inputs.verbose) }} ; then
           echo GITHUB_ENV=$GITHUB_ENV
           cat $GITHUB_ENV
