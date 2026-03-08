@@ -85,7 +85,7 @@ runs:
         fi
 
     - name: Show version for Unix
-      if: ${{ fromJSON(inputs.verbose) }} && runner.os != 'Windows'
+      if: ${{ fromJSON(inputs.verbose) && runner.os != 'Windows' }}
       shell: bash
       run: |
         echo "PATH=$PATH"
@@ -94,8 +94,8 @@ runs:
         type learn_github
 
     - name: Show version Windows
-      if: ${{ fromJSON(inputs.verbose) }} && runner.os == 'Windows'
-      shell: cmd.exe
+      if: ${{ fromJSON(inputs.verbose) && runner.os == 'Windows' }}
+      shell: cmd
       run: |
         echo "PATH=%PATH%"
         echo "---"
