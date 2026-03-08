@@ -84,15 +84,20 @@ runs:
           cat $GITHUB_ENV
         fi
 
-    - name: Show version
-      if: ${{ fromJSON(inputs.verbose) }}
+    - name: Show version for Unix
+      if: ${{ fromJSON(inputs.verbose) }} && runner.os != 'Windows'
       shell: bash
       run: |
         echo "PATH=$PATH"
         echo "---"
         echo "LEARN_GITHUB=$LEARN_GITHUB"
-        if ${{ runner.os == 'Windows' }} ; then
-          MSYS2_ARG_CONV_EXCL="*" cmd /d /c "where learn_github"
-        else
-          type learn_github
-        fi
+        type learn_github
+
+    - name: Show version Windows
+      if: ${{ fromJSON(inputs.verbose) }} && runner.os == 'Windows'
+      shell: cmd.exe
+      run: |
+        echo "PATH=%PATH%"
+        echo "---"
+        echo "LEARN_GITHUB=%LEARN_GITHUB%"
+        where learn_github
