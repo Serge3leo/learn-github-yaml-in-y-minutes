@@ -33,7 +33,7 @@ runs:
 
     - name: Restore cached Learn GitHub directory
       id: _
-      if: ${{ fromJSON(inputs.cache) }}
+      if: fromJSON(inputs.cache)
       uses: actions/cache/restore@v5
       with:
         key: ${{ inputs.key-prefix }}_Learn_GitHub_${{ inputs.version }}
@@ -43,12 +43,10 @@ runs:
       if: steps._.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        echo "runner.os: ${{ runner.os }}" \
-             "${{ runner.os == 'Windows' }}"
         cp -r dists "${{ inputs.location }}"
 
     - name: Save cached Learn GitHub directory
-      if: steps._.outputs.cache-hit != 'true'
+      if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
       uses: actions/cache/save@v5
       with:
         key: ${{ inputs.key-prefix }}_Learn_GitHub_${{ inputs.version }}
