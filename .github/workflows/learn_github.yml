@@ -293,7 +293,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      fail-fast: true
+      fail-fast: false
 
       matrix:
         os: ${{ fromJSON(vars.MATRIX_OSs) }}
@@ -403,6 +403,8 @@ jobs:
 
       - name: Test action Learn GitHub
         uses: ./
+        with:
+          verbose: true
 
       - name: Test Learn GitHub
         run: |
