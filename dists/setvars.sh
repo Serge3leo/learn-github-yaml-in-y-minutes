@@ -11,6 +11,6 @@ d=$(dirname "$r")
     printf "%s: FAIL: %s: не найден\n" "$0" "$d/bin" 1>&2
     exit 1
 }
-LEARN_GITHUB_DIR="$d"
+LEARN_GITHUB="$d"
 PATH="$d/bin:$PATH"
 exit 0

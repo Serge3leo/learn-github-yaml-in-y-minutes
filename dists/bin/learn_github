@@ -5,9 +5,9 @@
 
 r=$(realpath "$0")
 d=$(dirname "$r")
-if [ "$LEARN_GITHUB_DIR/bin" != "$d" ] ; then
-    printf "%s: FAIL, LEARN_GITHUB_DIR=%s\n" "$0" "$LEARN_GITHUB_DIR" 1>&2
+if [ "$LEARN_GITHUB/bin" != "$d" ] ; then
+    printf "%s: FAIL, LEARN_GITHUB=%s\n" "$0" "$LEARN_GITHUB" 1>&2
     exit 1
 fi
-echo "Хорь, LEARN_GITHUB_DIR=$LEARN_GITHUB_DIR" 1>&2
+echo "Хорь, LEARN_GITHUB=$LEARN_GITHUB" 1>&2
 exit 0
