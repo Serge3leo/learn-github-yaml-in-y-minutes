@@ -404,7 +404,7 @@ jobs:
       - name: Test action Learn GitHub
         uses: ./
         with:
-          cache: false
+          # cache: false
           verbose: true
 
       - name: Test Learn GitHub
