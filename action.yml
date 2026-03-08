@@ -61,23 +61,26 @@ runs:
     - name: Learn GitHub environments variables
       shell: bash
       run: |
-        gawk --version || echo ">>> Have gawk"
-        awk --version || echo ">>> Have awk"
-        mawk --version || echo ">>> Have mawk"
+        gawk --version || echo ">>> Not gawk"
+        awk --version || echo ">>> Not awk"
+        mawk --version || echo ">>> Not mawk"
         # TODO: call setvars
         # TODO: PATH
 
-        echo "LEARN_GITHUB=${{ inputs.location }}" >> $GITHUB_ENV
-        if ${{ runner.os == 'Windows' }} ; then
-          echo "${{ inputs.location }}\\bin" >> $GITHUB_PATH
-        else
-          echo "${{ inputs.location }}/bin" >> $GITHUB_PATH
-        fi
+        env -0 | sort -z | tr '\0' '\n' > /tmp/base
+        (
+          if ${{ runner.os == 'Windows' }} ; then
+            MSYS2_ARG_CONV_EXCL="*" \
+              cmd /d /c "${{ inputs.location }}\\setvars.bat && env -0"
+          else
+            . "${{ inputs.location }}/setvars.sh"
+            env -0
+        ) | sort -z | tr '\0' '\n' | (diff /tmp/base - || true) \
+          | sed -n '/^> /s///p' >> $GITHUB_ENV
+
         if ${{ fromJSON(inputs.verbose) }} ; then
           echo GITHUB_ENV=$GITHUB_ENV
           cat $GITHUB_ENV
-          echo GITHUB_PATH=$GITHUB_PATH
-          cat $GITHUB_PATH
         fi
 
     - name: Show version
