@@ -16,7 +16,7 @@ inputs:
     required: false
     description: Where to install Learn GitHub
     default: >-
-      ${{ case(vars.RUNNER_OS == 'Windows', 'C:\LearnGitHub',
+      ${{ case(runner.os == 'Windows', 'C:\LearnGitHub',
       '/opt/LearnGitHub') }}
   verbose:
     required: false
@@ -42,8 +42,8 @@ runs:
       if: steps._.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        echo "RUNNER_OS: ${{ vars.RUNNER_OS }}" \
-             "${{ vars.RUNNER_OS == 'Windows' }}"
+        echo "runner.os: ${{ runner.os }}" \
+             "${{ runner.os == 'Windows' }}"
         cp -r dists "${{ inputs.location }}"
 
     - name: Save cached Learn GitHub directory
@@ -75,7 +75,7 @@ runs:
         echo "PATH=$PATH"
         echo "---"
         echo "LEARN_GITHUB=$LEARN_GITHUB"
-        if ${{ vars.RUNNER_OS == 'Windows' }} ; then
+        if ${{ runner.os == 'Windows' }} ; then
           MSYS2_ARG_CONV_EXCL="*" cmd /d /c "where learn_github"
         else
           type learn_github
