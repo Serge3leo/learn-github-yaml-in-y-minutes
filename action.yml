@@ -57,10 +57,11 @@ runs:
       shell: bash
       run: |
         # TODO: call setvars
+        # TODO: PATH
 
         echo "LEARN_GITHUB=${{ inputs.location }}" >> $GITHUB_ENV
-        echo "${{ inputs.location }}\\bin" >> $GITHUB_PATH
         echo "${{ inputs.location }}/bin" >> $GITHUB_PATH
+        echo "${{ inputs.location }}\\bin" >> $GITHUB_PATH
         if ${{ fromJSON(inputs.verbose) }} ; then
           echo GITHUB_ENV=$GITHUB_ENV
           cat $GITHUB_ENV
