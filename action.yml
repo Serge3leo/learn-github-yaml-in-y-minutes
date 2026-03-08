@@ -33,6 +33,7 @@ runs:
 
     - name: Restore cached Learn GitHub directory
       id: _
+      if: ${{ fromJSON(inputs.cache) }}
       uses: actions/cache/restore@v5
       with:
         key: ${{ inputs.key-prefix }}_Learn_GitHub_${{ inputs.version }}
