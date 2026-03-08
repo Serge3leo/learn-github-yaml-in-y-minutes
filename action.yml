@@ -92,6 +92,7 @@ runs:
         echo "---"
         echo "LEARN_GITHUB=$LEARN_GITHUB"
         type learn_github
+        learn_github
 
     - name: Show version Windows
       if: ${{ fromJSON(inputs.verbose) && runner.os == 'Windows' }}
@@ -100,4 +101,5 @@ runs:
         echo "PATH=%PATH%"
         echo "---"
         echo "LEARN_GITHUB=%LEARN_GITHUB%"
-        where learn_github
+        rem TODO ?? where learn_github
+        learn_github
