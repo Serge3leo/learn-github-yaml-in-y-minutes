@@ -36,7 +36,8 @@ runs:
       if: fromJSON(inputs.cache)
       uses: actions/cache/restore@v5
       with:
-        key: ${{ inputs.key-prefix }}_Learn_GitHub_${{ inputs.version }}
+        key: format('{0}_Learn_GitHub_{1}_{2}',
+          inputs.key-prefix, inputs.version, runner.os)
         path: ${{ inputs.location }}
 
     - name: Install Learn GitHub
@@ -49,7 +50,8 @@ runs:
       if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
       uses: actions/cache/save@v5
       with:
-        key: ${{ inputs.key-prefix }}_Learn_GitHub_${{ inputs.version }}
+        key: format('{0}_Learn_GitHub_{1}_{2}',
+          inputs.key-prefix, inputs.version, runner.os)
         path: ${{ inputs.location }}
 
     - name: Learn GitHub environments variables
