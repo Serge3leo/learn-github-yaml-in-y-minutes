@@ -42,6 +42,8 @@ runs:
       if: steps._.outputs.cache-hit != 'true'
       shell: bash
       run: |
+        echo "RUNNER_OS: ${{ vars.RUNNER_OS }}" \
+             "${{ vars.RUNNER_OS == 'Windows' }}"
         cp -r dists "${{ inputs.location }}"
 
     - name: Save cached Learn GitHub directory
