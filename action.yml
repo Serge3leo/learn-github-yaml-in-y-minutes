@@ -44,6 +44,9 @@ runs:
       if: steps._.outputs.cache-hit != 'true'
       shell: bash
       run: |
+        for d in /usr/local /opt /opt/local ; do
+          mkdir -p $d/xxx && echo "Ok $d/xxx"
+        done
         cp -r dists "${{ inputs.location }}"
 
     - name: Save cached Learn GitHub directory
