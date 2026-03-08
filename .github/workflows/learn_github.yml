@@ -400,3 +400,10 @@ jobs:
           echo "single quotes=%single quotes%"
           echo "double quotes=%double quotes%"
           echo "literal_block=%literal_block%"
+
+      - name: Test action Learn GitHub
+        uses: ./
+
+      - name: Test Learn GitHub
+        run: |
+          learn_github
