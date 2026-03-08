@@ -293,7 +293,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      fail-fast: true
+      fail-fast: false
 
       matrix:
         os: ${{ fromJSON(vars.MATRIX_OSs) }}
@@ -400,3 +400,13 @@ jobs:
           echo "single quotes=%single quotes%"
           echo "double quotes=%double quotes%"
           echo "literal_block=%literal_block%"
+
+      - name: Test action Learn GitHub
+        uses: ./
+        with:
+          # cache: false
+          verbose: true
+
+      - name: Test Learn GitHub
+        run: |
+          learn_github

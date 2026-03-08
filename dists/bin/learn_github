@@ -1,0 +1,13 @@
+#!
+# vim:set sw=4 ts=8 fileencoding=utf8:
+# SPDX-License-Identifier: BSD-2-Clause
+# SPDX-FileCopyrightText: 2026 Сергей Леонтьев (leo@sai.msu.ru)
+
+r=$(realpath "$0")
+d=$(dirname "$r")
+if [ "$LEARN_GITHUB/bin" != "$d" ] ; then
+    printf "%s: FAIL, LEARN_GITHUB=%s\n" "$0" "$LEARN_GITHUB" 1>&2
+    exit 1
+fi
+echo "Хорь, LEARN_GITHUB=$LEARN_GITHUB" 1>&2
+exit 0

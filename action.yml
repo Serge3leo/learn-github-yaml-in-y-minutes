@@ -1,0 +1,84 @@
+---
+name: Test Learn GitHub
+description: Internal action of Learn GitHub in Y minutes
+branding:
+  color: blue
+  icon: terminal
+inputs:
+  cache:
+    required: false
+    description: If caching should be used
+    default: true
+  key-prefix:
+    required: false
+    description: Add prefix to cache key (for refresh or identification)
+  location:
+    required: false
+    description: Where to install Learn GitHub
+    default: >-
+      ${{ case(runner.os == 'Windows', 'C:\LearnGitHub',
+      '/opt/LearnGitHub') }}
+  verbose:
+    required: false
+    description: Show version and location
+    default: false
+  version:
+    required: false
+    description: A specific version to install
+    default: 0.1.0
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Restore cached Learn GitHub directory
+      id: _
+      if: fromJSON(inputs.cache)
+      uses: actions/cache/restore@v5
+      with:
+        key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
+          inputs.key-prefix, inputs.version, runner.os) }}
+        path: ${{ inputs.location }}
+
+    - name: Install Learn GitHub
+      if: steps._.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        cp -r dists "${{ inputs.location }}"
+
+    - name: Save cached Learn GitHub directory
+      if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
+      uses: actions/cache/save@v5
+      with:
+        key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
+          inputs.key-prefix, inputs.version, runner.os) }}
+        path: ${{ inputs.location }}
+
+    - name: Learn GitHub environments variables
+      shell: bash
+      run: |
+        # TODO: call setvars
+        # TODO: PATH
+
+        echo "LEARN_GITHUB=${{ inputs.location }}" >> $GITHUB_ENV
+        echo "${{ inputs.location }}/bin" >> $GITHUB_PATH
+        echo "${{ inputs.location }}\\bin" >> $GITHUB_PATH
+        if ${{ fromJSON(inputs.verbose) }} ; then
+          echo GITHUB_ENV=$GITHUB_ENV
+          cat $GITHUB_ENV
+          echo GITHUB_PATH=$GITHUB_PATH
+          cat $GITHUB_PATH
+        fi
+
+    - name: Show version
+      if: ${{ fromJSON(inputs.verbose) }}
+      shell: bash
+      run: |
+        echo "PATH=$PATH"
+        echo "---"
+        echo "LEARN_GITHUB=$LEARN_GITHUB"
+        if ${{ runner.os == 'Windows' }} ; then
+          MSYS2_ARG_CONV_EXCL="*" cmd /d /c "where learn_github"
+        else
+          type learn_github
+        fi
