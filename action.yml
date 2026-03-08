@@ -67,13 +67,13 @@ runs:
         # TODO: call setvars
         # TODO: PATH
 
+        MSYS2_ARG_CONV_EXCL="*" ; export MSYS2_ARG_CONV_EXCL
         env -0 | sort -z | tr '\0' '\n' > /tmp/base
         (
           if ${{ runner.os == 'Windows' }} ; then
-            MSYS2_ARG_CONV_EXCL="*" \
-              cmd /d /c "${{ inputs.location }}\\setvars.bat && env -0"
+            cmd /d /c "${{ inputs.location }}\\setvars.bat && env -0"
           else
-            . "${{ inputs.location }}/setvars.sh"
+            source "${{ inputs.location }}/setvars.sh"
             env -0
           fi
         ) | sort -z | tr '\0' '\n' | (diff /tmp/base - || true) \
