@@ -44,10 +44,11 @@ runs:
       if: steps._.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        for d in /usr/local /opt /opt/local ; do
-          mkdir -p $d/xxx && echo "Ok $d/xxx"
-        done
-        cp -r dists "${{ inputs.location }}"
+        if ${{ runner.os == 'macOS' }} ; then
+          sudo cp -r dists "${{ inputs.location }}"
+        else
+          cp -r dists "${{ inputs.location }}"
+        fi
 
     - name: Save cached Learn GitHub directory
       if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
