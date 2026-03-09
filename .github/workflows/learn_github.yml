@@ -315,7 +315,7 @@ jobs:
             cpp_compiler: occ
             os: windows-latest
         exclude: [{os: macos-latest},
-                  {os: windows-latest, c_compiler: occ, cpp_compiler: occ}]
+                  {os: windows-latest, c_compiler: occ}]
 
     env:
       env-0-grep-E: |
