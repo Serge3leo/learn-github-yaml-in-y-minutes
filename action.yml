@@ -24,7 +24,7 @@ inputs:
   version:
     required: false
     description: A specific version to install
-    default: 0.1.0
+    default: 0.1.1
 runs:
   using: composite
   steps:
@@ -50,7 +50,8 @@ runs:
       if: steps._.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        cp -r dists "${{ inputs.location }}"
+        mkdir -p "${{ inputs.location }}"
+        cp -r dists/* "${{ inputs.location }}"
 
     - name: Save cached Learn GitHub directory
       if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
@@ -64,17 +65,14 @@ runs:
       shell: bash
       run: |
         ptrn="^(path|learn_github)="
+        pd="${{ case(runner.os == 'Windows', ';', ':') }}"
         if ${{ runner.os == 'Windows' }} ; then
-          # TODO env -0, без преобразования переменных или Python скрипт
-          MSYS2_ARG_CONV_EXCL='*' \
-            cmd /d /c "${{ inputs.location }}\setvars.bat && set" \
-            | grep -E -i "$ptrn" | tr -d '\r'
-          pd=";"
+          MSYS2_ARG_CONV_EXCL='*' MSYS2_ENV_CONV_EXCL='*' \
+            cmd /d /c "${{ inputs.location }}\setvars.bat && python env.py -0"
         else
           . "${{ inputs.location }}/setvars.sh"
-          env -0 | grep -E -i -z "$ptrn" | tr '\0' '\n'
-          pd=":"
-        fi > /tmp/envs
+          env -0
+        fi | grep -E -i -z "$ptrn" | tr '\0' '\n' > /tmp/envs
         grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
         sed -n "/^path=\([^${pd}]*\)${pd}.*$/Is//\\1/p" /tmp/envs \
           | sed '1!G;h;$!d' >> $GITHUB_PATH
