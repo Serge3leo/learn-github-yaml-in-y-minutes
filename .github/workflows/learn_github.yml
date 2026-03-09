@@ -303,15 +303,17 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: ${{ fromJSON(vars.MATRIX_OSs) }}
+        os: [macos-latest, ubuntu-latest, windows-latest]
         include:
-          # TODO: понять как работает matrix.os
           - os: macos-latest
             platform: "darwin"
           - os: ubuntu-latest
             platform: "linux"
           - os: windows-latest
             platform: "win32"
+        exclude:
+          - os: macos-latest
+          - os: windows-latest
 
     env:
       env-0-grep-E: |
@@ -350,7 +352,7 @@ jobs:
         run: |
           python -m pip install yamllint
           python -m yamllint --list-file .
-          # python -m yamllint .
+          python -m yamllint .
 
       - name: Check booleans
         shell: bash
@@ -413,7 +415,7 @@ jobs:
         env: *base
         run: echo "$name"
 
-#     # У GitHub не реализовано слияние словарей
+#     # GitHub не реализовал слияние словарей
 #     - name: Test anchors, bar
 #       env:
 #         <<: *base
