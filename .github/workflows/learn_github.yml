@@ -295,6 +295,7 @@ env:
   #   item2: null
   #   item3: null
 
+vars:
   los: "[macos-latest, ubuntu-latest, windows-latest]"
 
 jobs:
@@ -312,8 +313,11 @@ jobs:
         c_compiler: [cl, clang, gcc, icx, lcc, occ, pocc]
         build_type: [Release]
         exclude:
-          - os: ubuntu-latest
+          - os: macos-latest
             c_compiler: cl
+          - {os: macos-latest, c_compiler: occ}
+          - {os: macos-latest, c_compiler: pocc}
+          - {os: ubuntu-latest, c_compiler: cl}
           - {os: ubuntu-latest, c_compiler: occ}
           - {os: ubuntu-latest, c_compiler: pocc}
           - {os: windows-latest, c_compiler: clang}
