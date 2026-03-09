@@ -61,27 +61,25 @@ runs:
     - name: Learn GitHub environments variables
       shell: bash
       run: |
-        gawk --version || echo ">>> Not gawk"
-        awk --version || echo ">>> Not awk"
-        mawk --version || echo ">>> Not mawk"
-        # TODO: call setvars
-        # TODO: PATH
-
-        MSYS2_ARG_CONV_EXCL="*" ; export MSYS2_ARG_CONV_EXCL
-        env -0 | sort -z | tr '\0' '\n' > /tmp/base
-        (
-          if ${{ runner.os == 'Windows' }} ; then
-            cmd /d /c "${{ inputs.location }}\\setvars.bat && env -0"
-          else
-            source "${{ inputs.location }}/setvars.sh"
-            env -0
-          fi
-        ) | sort -z | tr '\0' '\n' | (diff /tmp/base - || true) \
-          | sed -n '/^> /s///p' >> $GITHUB_ENV
+        ptrn="^(path|learn_github)="
+        if [ "MINGW64_NT-10.0-19045" == "`uname -s`" ] ; then
+            # TODO env -0, без преобразования переменных или Python скрипт
+            MSYS2_ARG_CONV_EXCL='*' cmd /d /c set \
+              | grep -E -i "$ptrn" | tr -d '\r'
+            pd=";"
+        else
+            env -0 | grep -E -i -z "$ptrn" | tr '\0' '\n'
+            pd=":"
+        fi > /tmp/envs
+        grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
+        sed -n "/^path=\([^${pd}]*\)${pd}.*$/Is//\\1/p" /tmp/envs \
+          | tail -r >> $GITHUB_PATH
 
         if ${{ fromJSON(inputs.verbose) }} ; then
           echo GITHUB_ENV=$GITHUB_ENV
           cat $GITHUB_ENV
+          echo GITHUB_PATH=$GITHUB_PATH
+          cat $GITHUB_PATH
         fi
 
     - name: Show version for Unix
