@@ -64,16 +64,14 @@ runs:
       shell: bash
       run: |
         ptrn="^(path|learn_github)="
+        pd="${{ case(runner.os == 'Windows', ';', ':') }}"
         if ${{ runner.os == 'Windows' }} ; then
           MSYS2_ARG_CONV_EXCL='*' \
             cmd /d /c "${{ inputs.location }}\setvars.bat && python env.py -0" \
-          pd=";"
         else
           . "${{ inputs.location }}/setvars.sh"
           env -0
-          pd=":"
         fi | grep -E -i -z "$ptrn" | tr '\0' '\n' > /tmp/envs
-        echo "pd=${pd}"
         grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
         sed -n "/^path=\([^${pd}]*\)${pd}.*$/Is//\\1/p" /tmp/envs \
           | sed '1!G;h;$!d' >> $GITHUB_PATH
