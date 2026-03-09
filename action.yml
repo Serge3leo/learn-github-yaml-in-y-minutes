@@ -30,12 +30,13 @@ runs:
   steps:
     - uses: actions/checkout@v4
 
-    - name: Key & path
+    - name: "Cache parameters: key, path"
+      id: cp
       shell: bash
       run: |
         (
           echo "key=${{ format('{0}_Learn_GitHub_{1}_{2}',
-                inputs.key-prefix, inputs.version, runner.os) }}"
+                        inputs.key-prefix, inputs.version, runner.os) }}"
           echo "path=${{ inputs.location }}"
         ) >> $GITHUB_OUTPUT
 
@@ -43,30 +44,30 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       run: |
-        sudo mkdir -p "${{ steps.outputs.path }}"
-        sudo chown runner:staff "${{ steps.outputs.path }}"
+        sudo mkdir -p "${{ steps.cp.outputs.path }}"
+        sudo chown runner:staff "${{ steps.cp.outputs.path }}"
 
     - name: Restore cached Learn GitHub directory
-      id: _
+      id: cr
       if: fromJSON(inputs.cache)
       uses: actions/cache/restore@v5
       with:
-        key: ${{ steps.outputs.key }}
-        path: ${{ steps.outputs.path }}
+        key: ${{ steps.cp.outputs.key }}
+        path: ${{ steps.cp.outputs.path }}
 
     - name: Install Learn GitHub
-      if: steps._.outputs.cache-hit != 'true'
+      if: steps.cr.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        mkdir -p "${{ steps.outputs.path }}"
-        cp -r dists/* "${{ steps.outputs.path }}"
+        mkdir -p "${{ steps.cp.outputs.path }}"
+        cp -r dists/* "${{ steps.cp.outputs.path }}"
 
     - name: Save cached Learn GitHub directory
-      if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
+      if: steps.cr.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
       uses: actions/cache/save@v5
       with:
-        key: ${{ steps.outputs.key }}
-        path: ${{ steps.outputs.path }}
+        key: ${{ steps.cp.outputs.key }}
+        path: ${{ steps.cp.outputs.path }}
 
     - name: Learn GitHub environments variables
       shell: bash
@@ -76,9 +77,9 @@ runs:
         if ${{ runner.os == 'Windows' }} ; then
           MSYS2_ARG_CONV_EXCL='*' MSYS2_ENV_CONV_EXCL='*' \
             cmd /d /c \
-              "${{ steps.outputs.path }}\setvars.bat && python env.py -0"
+              "${{ steps.cp.outputs.path }}\setvars.bat && python env.py -0"
         else
-          . "${{ steps.outputs.path }}/setvars.sh"
+          . "${{ steps.cp.outputs.path }}/setvars.sh"
           env -0
         fi | grep -E -i -z "$ptrn" | tr '\0' '\n' > /tmp/envs
         grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
