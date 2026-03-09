@@ -401,7 +401,7 @@ jobs:
           verbose: true
 
       - name: Test Learn GitHub
-        env:  # &base
+        env: &base
           name: Каждый будет иметь одинаковое имя
         run: |
           learn_github
