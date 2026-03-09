@@ -295,14 +295,8 @@ env:
   #   item2: null
   #   item3: null
 
-vars:
-  los: "[macos-latest, ubuntu-latest, windows-latest]"
-
 jobs:
   build:
-    # if: matrix.os == 'ubuntu-latest'
-    # if: runner.os == 'Windows'
-
     runs-on: ${{ matrix.os }}
 
     strategy:
