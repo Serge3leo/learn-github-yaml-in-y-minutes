@@ -75,12 +75,12 @@ runs:
           MSYS2_ARG_CONV_EXCL='*' \
             cmd /d /c "${{ inputs.location }}\setvars.bat && set" \
             | grep -E -i "$ptrn" | tr -d '\r'
-          echo "cmd...: $?"
+          echo "cmd...: $?" 1>&2
           pd=";"
         else
           . "${{ inputs.location }}/setvars.sh"
           env -0 | grep -E -i -z "$ptrn" | tr '\0' '\n'
-          echo "env...: $?"
+          echo "env...: $?" 1>&2
           pd=":"
         fi > /tmp/envs
         grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
