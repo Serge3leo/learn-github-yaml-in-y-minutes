@@ -410,6 +410,7 @@ jobs:
         env:  # &foo
           # <<: *base
           age: 10
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           learn_github
@@ -418,6 +419,10 @@ jobs:
         env:  # &bar
           # <<: *base
           age: 20
+        if: runner.os == 'Windows'
         shell: cmd
         run: |
+          echo "PATH=%PATH%"
+          echo "---"
+          echo "LEARN_GITHUB=%LEARN_GITHUB%"
           learn_github
