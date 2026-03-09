@@ -2,7 +2,7 @@
  SPDX-License-Identifier: BSD-2-Clause
  SPDX-FileCopyrightText: 2026 Сергей Леонтьев (leo@sai.msu.ru)
  -->
-# Изучаем GitHub за Y минут
+# Изучаем GitHub YAML за Y минут
 ![2026-01-27_20_21_11.jpg](2026-01-27_20_21_11.jpg)
 <!-- Habr cut -->
 > _"Пять грустных солдат, пять веселых солдат и ефрейтор..."_
