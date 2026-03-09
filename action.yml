@@ -31,7 +31,6 @@ runs:
     - uses: actions/checkout@v4
 
     - name: Key & path
-      id: _
       shell: bash
       run: |
         (
@@ -44,30 +43,30 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       run: |
-        sudo mkdir -p "${{ steps._.outputs.path }}"
-        sudo chown runner:staff "${{ steps._.outputs.path }}"
+        sudo mkdir -p "${{ steps.outputs.path }}"
+        sudo chown runner:staff "${{ steps.outputs.path }}"
 
     - name: Restore cached Learn GitHub directory
       id: _
       if: fromJSON(inputs.cache)
       uses: actions/cache/restore@v5
       with:
-        key: ${{ steps._.outputs.key }}
-        path: ${{ steps._.outputs.path }}
+        key: ${{ steps.outputs.key }}
+        path: ${{ steps.outputs.path }}
 
     - name: Install Learn GitHub
       if: steps._.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        mkdir -p "${{ steps._.outputs.path }}"
-        cp -r dists/* "${{ steps._.outputs.path }}"
+        mkdir -p "${{ steps.outputs.path }}"
+        cp -r dists/* "${{ steps.outputs.path }}"
 
     - name: Save cached Learn GitHub directory
       if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
       uses: actions/cache/save@v5
       with:
-        key: ${{ steps._.outputs.key }}
-        path: ${{ steps._.outputs.path }}
+        key: ${{ steps.outputs.key }}
+        path: ${{ steps.outputs.path }}
 
     - name: Learn GitHub environments variables
       shell: bash
@@ -77,9 +76,9 @@ runs:
         if ${{ runner.os == 'Windows' }} ; then
           MSYS2_ARG_CONV_EXCL='*' MSYS2_ENV_CONV_EXCL='*' \
             cmd /d /c \
-              "${{ steps._.outputs.path }}\setvars.bat && python env.py -0"
+              "${{ steps.outputs.path }}\setvars.bat && python env.py -0"
         else
-          . "${{ steps._.outputs.path }}/setvars.sh"
+          . "${{ steps.outputs.path }}/setvars.sh"
           env -0
         fi | grep -E -i -z "$ptrn" | tr '\0' '\n' > /tmp/envs
         grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
