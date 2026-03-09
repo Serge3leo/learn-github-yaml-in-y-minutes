@@ -304,10 +304,6 @@ jobs:
 
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        include:
-          - os: macos-latest
-          - os: ubuntu-latest
-          - os: windows-latest
         exclude:
           - os: macos-latest
           - os: windows-latest
