@@ -295,6 +295,8 @@ env:
   #   item2: null
   #   item3: null
 
+  los: [macos-latest, ubuntu-latest, windows-latest]
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -303,7 +305,7 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: ${{ env.los }}
         c_compiler: [lcc]
         build_type: [Release]
         include:
