@@ -1,6 +1,6 @@
 ---
-name: Test Learn GitHub
-description: Internal action of Learn GitHub in Y minutes
+name: Test Learn GitHub YAML
+description: Internal action of Learn GitHub YAML in Y minutes
 branding:
   color: blue
   icon: terminal
@@ -30,36 +30,58 @@ runs:
   steps:
     - uses: actions/checkout@v4
 
-    - name: macOS need `sudo` to create
-      if: steps._.outputs.cache-hit != 'true' && runner.os == 'macOS'
+    - name: "Cache parameters: key, path"
+      id: cp
       shell: bash
       run: |
-        sudo mkdir -p "${{ inputs.location }}"
-        sudo chown runner:staff "${{ inputs.location }}"
+        (
+          echo "key=${{ format('{0}_Learn_GitHub_{1}_{2}',
+                        inputs.key-prefix, inputs.version, runner.os) }}"
+          echo "path=${{ inputs.location }}"
+        ) >> $GITHUB_OUTPUT
+
+    - name: macOS need `sudo` to create cache dir
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        sudo mkdir -p "${{ steps.cp.outputs.path }}"
+        sudo chown runner:staff "${{ steps.cp.outputs.path }}"
 
     - name: Restore cached Learn GitHub directory
-      id: _
+      id: cr
       if: fromJSON(inputs.cache)
       uses: actions/cache/restore@v5
+      # Не поддерживается в actions.yml: Anchors are not currently supported
+      # with: &cache_param
+      #   key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
+      #            inputs.key-prefix, inputs.version, runner.os) }}
+      #   path: ${{ steps.cp.outputs.path }}
+      # with:
+      #   key: &cache_key ${{ format('{0}_Learn_GitHub_{1}_{2}',
+      #     inputs.key-prefix, inputs.version, runner.os) }}
+      #   path: &cache_path ${{ inputs.location }}
       with:
-        key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
-          inputs.key-prefix, inputs.version, runner.os) }}
-        path: ${{ inputs.location }}
+        key: ${{ steps.cp.outputs.key }}
+        path: ${{ steps.cp.outputs.path }}
 
     - name: Install Learn GitHub
-      if: steps._.outputs.cache-hit != 'true'
+      if: steps.cr.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        mkdir -p "${{ inputs.location }}"
-        cp -r dists/* "${{ inputs.location }}"
+        mkdir -p "${{ steps.cp.outputs.path }}"
+        cp -r dists/* "${{ steps.cp.outputs.path }}"
 
     - name: Save cached Learn GitHub directory
-      if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
+      if: steps.cr.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
       uses: actions/cache/save@v5
+      # Не поддерживается в actions.yml: Anchors are not currently supported
+      # with: *cache_param
+      # with:
+      #   key: *cache_key
+      #   path: *cache_path
       with:
-        key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
-          inputs.key-prefix, inputs.version, runner.os) }}
-        path: ${{ inputs.location }}
+        key: ${{ steps.cp.outputs.key }}
+        path: ${{ steps.cp.outputs.path }}
 
     - name: Learn GitHub environments variables
       shell: bash
@@ -68,9 +90,10 @@ runs:
         pd="${{ case(runner.os == 'Windows', ';', ':') }}"
         if ${{ runner.os == 'Windows' }} ; then
           MSYS2_ARG_CONV_EXCL='*' MSYS2_ENV_CONV_EXCL='*' \
-            cmd /d /c "${{ inputs.location }}\setvars.bat && python env.py -0"
+            cmd /d /c \
+              "${{ steps.cp.outputs.path }}\setvars.bat && python env.py -0"
         else
-          . "${{ inputs.location }}/setvars.sh"
+          . "${{ steps.cp.outputs.path }}/setvars.sh"
           env -0
         fi | grep -E -i -z "$ptrn" | tr '\0' '\n' > /tmp/envs
         grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
@@ -84,7 +107,7 @@ runs:
           cat $GITHUB_PATH
         fi
 
-    - name: Show version for Unix
+    - name: Show version for bash
       if: fromJSON(inputs.verbose) && runner.os != 'Windows'
       shell: bash
       run: |
@@ -94,12 +117,21 @@ runs:
         type learn_github
         learn_github
 
-    - name: Show version Windows
+    - name: Show version cmd
       if: fromJSON(inputs.verbose) && runner.os == 'Windows'
       shell: cmd
       run: |
         echo "PATH=%PATH%"
         echo "---"
         echo "LEARN_GITHUB=%LEARN_GITHUB%"
-        rem TODO ?? where learn_github
+        learn_github
+
+    - name: Show version pwsh
+      if: fromJSON(inputs.verbose) && runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        "PATH=$env:PATH"
+        "---"
+        "LEARN_GITHUB=$env:LEARN_GITHUB"
+        get-command learn_github
         learn_github

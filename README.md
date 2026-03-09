@@ -1,4 +1,4 @@
-[![Workflows Lessons by Learn YAML in Y minutes](https://github.com/Serge3leo/workflows_lessons/actions/workflows/workflows_lessons.yml/badge.svg?branch=main)](https://github.com/Serge3leo/workflows_lessons/actions/workflows/workflows_lessons.yml)
+[![Workflows Lessons by Learn YAML in Y minutes](https://github.com/Serge3leo/learn-github-in-y-minutes-ru/actions/workflows/learn_github.yml/badge.svg?branch=main)](https://github.com/Serge3leo/learn-github-in-y-minutes-ru/actions/workflows/learn_github.yml)
 
 # Learn GitHub in Y minutes (in Russian)
 My lessons of GitHub Actions workflows.

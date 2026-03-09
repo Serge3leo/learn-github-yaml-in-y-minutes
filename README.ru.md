@@ -1,4 +1,4 @@
-[![CMake on multiple platforms](https://github.com/Serge3leo/countof_ns/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Serge3leo/countof_ns/actions/workflows/cmake-multi-platform.yml)
+[![Workflows Lessons by Learn YAML in Y minutes](https://github.com/Serge3leo/learn-github-in-y-minutes-ru/actions/workflows/learn_github.yml/badge.svg?branch=main)](https://github.com/Serge3leo/learn-github-in-y-minutes-ru/actions/workflows/learn_github.yml)
 
 # Изучаем GitHub за Y минут
 
