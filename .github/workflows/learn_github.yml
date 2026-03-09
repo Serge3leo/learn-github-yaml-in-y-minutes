@@ -306,6 +306,11 @@ jobs:
         c_compiler: [lcc]
         build_type: [Release]
         os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+          - c_compiler: lcc
+            cpp_compiler: l++
+            os: ubuntu-latest
+            platform: "e2k"
         exclude: [{os: macos-latest}, {os: windows-latest}]
 
     env:
