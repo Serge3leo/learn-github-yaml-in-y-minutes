@@ -309,28 +309,22 @@ jobs:
 
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        c_compiler: [cl, clang, gcc, icx, lcc, occ]
+        c_compiler: [cl, clang, gcc, icx, lcc, occ, pocc]
         build_type: [Release]
         exclude:
           - os: ubuntu-latest
             c_compiler: cl
-          - os: ubuntu-latest
-            c_compiler: occ
-          - os: ubuntu-latest
-            c_compiler: pocc
-          - os: windows-latest
-            c_compiler: clang
-          - os: windows-latest
-            c_compiler: gcc
-          - os: windows-latest
-            c_compiler: icx
-          - os: windows-latest
-            c_compiler: lcc
-          # Насильно
+          - {os: ubuntu-latest, c_compiler: occ}
+          - {os: ubuntu-latest, c_compiler: pocc}
+          - {os: windows-latest, c_compiler: clang}
+          - {os: windows-latest, c_compiler: gcc}
+          - {os: windows-latest, c_compiler: icx}
+          - {os: windows-latest, c_compiler: lcc}
+          #
+          - {c_compiler: clang}
+          # TODO: давить через переменную
           - os: macos-latest
-        include:
-          - os: ubuntu-latest
-            c_compiler: gcc
+        include: [{os: ubuntu-latest}, {c_compiler: gcc}]
 
     env:
       env-0-grep-E: |
