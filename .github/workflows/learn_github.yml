@@ -83,7 +83,7 @@ env:
   # the string into a literal newline (\n).  Folded block removes newlines
   # within the string.
   # ПРЕДУПРЕЖДЕНИЕ: `printenv` неприменим, следует использовать:
-  #                 - `env -0` (вариант `printenv -0` linux и windows);
+  #                 - `env -0` (вариант `printenv -0` linux);
   #                 - запись в `GITHUB_ENV` тоже непроста.
   # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#multiline-strings
   literal_block: |

@@ -27,7 +27,18 @@ inputs:
     default: 0.1.1
 runs:
   using: composite
+  env:
+    have1: 1
+
   steps:
+    - name: Acts
+      env:
+        have2: 2
+      shell: bash
+      run: |
+        echo "have1=$have1"
+        echo "have2=$have2"
+
     - uses: actions/checkout@v4
 
     - name: macOS need `sudo` to create
