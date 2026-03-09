@@ -405,4 +405,4 @@ jobs:
         run: |
           learn_github
 
-      - << *base
+      - *base
