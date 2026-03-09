@@ -31,7 +31,7 @@ runs:
     - uses: actions/checkout@v4
 
     - name: Key & path
-      id: i
+      id: _
       shell: bash
       run: |
         (
@@ -44,30 +44,30 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       run: |
-        sudo mkdir -p "${{ steps.i.outputs.path }}"
-        sudo chown runner:staff "${{ steps.i.outputs.path }}"
+        sudo mkdir -p "${{ steps._.outputs.path }}"
+        sudo chown runner:staff "${{ steps._.outputs.path }}"
 
     - name: Restore cached Learn GitHub directory
       id: _
       if: fromJSON(inputs.cache)
       uses: actions/cache/restore@v5
       with:
-        key: ${{ steps.i.outputs.key }}
-        path: ${{ steps.i.outputs.path }}
+        key: ${{ steps._.outputs.key }}
+        path: ${{ steps._.outputs.path }}
 
     - name: Install Learn GitHub
       if: steps._.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        mkdir -p "${{ steps.i.outputs.path }}"
-        cp -r dists/* "${{ steps.i.outputs.path }}"
+        mkdir -p "${{ steps._.outputs.path }}"
+        cp -r dists/* "${{ steps._.outputs.path }}"
 
     - name: Save cached Learn GitHub directory
       if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
       uses: actions/cache/save@v5
       with:
-        key: ${{ steps.i.outputs.key }}
-        path: ${{ steps.i.outputs.path }}
+        key: ${{ steps._.outputs.key }}
+        path: ${{ steps._.outputs.path }}
 
     - name: Learn GitHub environments variables
       shell: bash
@@ -77,9 +77,9 @@ runs:
         if ${{ runner.os == 'Windows' }} ; then
           MSYS2_ARG_CONV_EXCL='*' MSYS2_ENV_CONV_EXCL='*' \
             cmd /d /c \
-              "${{ steps.i.outputs.path }}\setvars.bat && python env.py -0"
+              "${{ steps._.outputs.path }}\setvars.bat && python env.py -0"
         else
-          . "${{ steps.i.outputs.path }}/setvars.sh"
+          . "${{ steps._.outputs.path }}/setvars.sh"
           env -0
         fi | grep -E -i -z "$ptrn" | tr '\0' '\n' > /tmp/envs
         grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
