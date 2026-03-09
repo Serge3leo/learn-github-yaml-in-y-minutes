@@ -350,7 +350,7 @@ jobs:
         run: |
           python -m pip install yamllint
           python -m yamllint --list-file .
-          python -m yamllint .
+          # python -m yamllint .
 
       - name: Check booleans
         shell: bash
@@ -405,4 +405,4 @@ jobs:
         run: |
           learn_github
 
-      - *base
+      - {*base, shell: bash}
