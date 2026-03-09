@@ -124,7 +124,7 @@ runs:
         echo "PATH=%PATH%"
         echo "---"
         echo "LEARN_GITHUB=%LEARN_GITHUB%"
-        learn_github.bat
+        learn_github
 
     - name: Show version pwsh
       if: fromJSON(inputs.verbose) && runner.os == 'Windows'
@@ -134,4 +134,4 @@ runs:
         "---"
         "LEARN_GITHUB=$env:LEARN_GITHUB"
         get-command learn_github
-        learn_github.bat
+        learn_github

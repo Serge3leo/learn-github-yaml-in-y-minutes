@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2026 Сергей Леонтьев (leo@sai.msu.ru)
 
-name: Workflows Lessons by Learn YAML in Y minutes
+name: Рабочий процесс изучения GitHub за Y минут
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -128,7 +128,9 @@ env:
   # Типы коллекций #
   ##################
 
-  # (Line: 121, Col: 5): A mapping was not expected
+  # Контекст GitHub `env` не допускает вложенных словарей, но они есть ниже:
+  # `jobs` и т.д.
+
   # # Вложения используют отступы. Отступ в 2 пробела предпочтителен (но не
   # # обязателен).
   # a_nested_map:
@@ -140,7 +142,8 @@ env:
   # В словарях (maps) используются не только строковые значения ключей.
   0.25: a float key
 
-  # (Line: 26, Col: 3): Non-scalar mapping key is not supported
+  # Увы, GitHub не поддерживает словари со сложными ключами.
+
   # # Ключи также могут быть сложными, например многострочными.
   # # Мы используем ? с последующим пробелом, чтобы обозначить начало сложного
   # # ключа.
@@ -148,8 +151,7 @@ env:
   # Этот ключ
   # который содержит несколько строк
   # и это его значение
-
-  # (Line: 26, Col: 3): Non-scalar mapping key is not supported
+  #
   # # YAML также разрешает соответствия между последовательностями со сложными
   # # ключами
   # # Некоторые парсеры могут выдать предупреждения или ошибку
@@ -339,20 +341,6 @@ jobs:
         env -0 | grep -E -z "^(datetime_space_separated_.*)=" | tr "\0" "\n"
         env -0 | grep -E -z "^(date_implicit)=" | tr "\0" "\n"
         echo "---"
-
-      unimplemented-part: >
-        env -0 | grep -E -z "^(a_nested_map)=" | tr "\0" "\n"
-        env -0 | grep -E -z "This is a key" | tr "\0" "\n"
-        env -0 | grep -E -z "Manchester United" | tr "\0" "\n"
-        env -0 | grep -E -z "^(a_sequence|json_map|json_seq)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(and quotes are optional)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(base|foo|bar)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(explicit_datetime)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(python_complex_number)=" | tr "\0" "\n"
-        env -0 | grep -E -z "Fifty Seven" | tr "\0" "\n"
-        env -0 | grep -E -z "^(date_explicit)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(gif_file)=" | tr "\0" "\n"
-        env -0 | grep -E -z "^(set|or|set2)=" | tr "\0" "\n"
 
     steps:
       - uses: actions/checkout@v4
