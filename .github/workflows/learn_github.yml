@@ -196,6 +196,7 @@ env:
     ключей.
   other_anchor: *anchor_name
 
+  # Anchors are not currently supported. Remove the anchor '...'
   # (Line: 185, Col: 9): A mapping was not expected
   # # Якоря могут использоваться для дублирования/наследования свойств
   # base: &base
