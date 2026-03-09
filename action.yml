@@ -63,10 +63,13 @@ runs:
     - name: Learn GitHub environments variables
       shell: bash
       run: |
+        set +e
+        set -x
+
         ptrn="^(path|learn_github)="
         pd="${{ case(runner.os == 'Windows', ';', ':') }}"
         if ${{ runner.os == 'Windows' }} ; then
-          MSYS2_ARG_CONV_EXCL='*' \
+          MSYS2_ARG_CONV_EXCL='*' MSYS2_ENV_CONV_EXCL='*' \
             cmd /d /c "${{ inputs.location }}\setvars.bat && python env.py -0" \
         else
           . "${{ inputs.location }}/setvars.sh"
