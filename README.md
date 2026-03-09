@@ -1,6 +1,6 @@
-[![Workflows Lessons by Learn YAML in Y minutes](https://github.com/Serge3leo/learn-github-in-y-minutes-ru/actions/workflows/learn_github.yml/badge.svg?branch=main)](https://github.com/Serge3leo/learn-github-in-y-minutes-ru/actions/workflows/learn_github.yml)
+[![Рабочий процесс изучения GitHub YAML за Y минут](https://github.com/Serge3leo/learn-github-yaml-in-y-minutes/actions/workflows/learn_github_yaml.yml/badge.svg?branch=main)](https://github.com/Serge3leo/learn-github-yaml-in-y-minutes/actions/workflows/learn_github_yaml.yml)
 
-# Learn GitHub in Y minutes (in Russian)
+# Learn GitHub YAML in Y minutes (in Russian)
 My lessons of GitHub Actions workflows.
 
 # Contributing
