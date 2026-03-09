@@ -31,6 +31,13 @@ runs:
   steps:
     - uses: actions/checkout@v4
 
+    - name: macOS need `sudo` to create
+      if: steps._.outputs.cache-hit != 'true' && runner.os != 'Windows'
+      shell: bash
+      run: |
+        sudo mkdir -p "${{ inputs.location }}"
+        sudo chmod 777 "${{ inputs.location }}"
+
     - name: Restore cached Learn GitHub directory
       id: _
       if: fromJSON(inputs.cache)
@@ -39,13 +46,6 @@ runs:
         key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
           inputs.key-prefix, inputs.version, runner.os) }}
         path: ${{ inputs.location }}
-
-    - name: macOS need `sudo` to create
-      if: steps._.outputs.cache-hit != 'true' && runner.os != 'Windows'
-      shell: bash
-      run: |
-        sudo mkdir -p "${{ inputs.location }}"
-        sudo chmod 777 "${{ inputs.location }}"
 
     - name: Install Learn GitHub
       if: steps._.outputs.cache-hit != 'true'
@@ -86,7 +86,7 @@ runs:
         grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
         echo "grep...: $?"
         sed -n "/^path=\([^${pd}]*\)${pd}.*$/Is//\\1/p" /tmp/envs \
-          | tail -r >> $GITHUB_PATH
+          | sed '1!G;h;$!d' >> $GITHUB_PATH
         echo "sed...: $?"
 
         if ${{ fromJSON(inputs.verbose) }} ; then
