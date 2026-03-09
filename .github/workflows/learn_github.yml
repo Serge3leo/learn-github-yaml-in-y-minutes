@@ -305,7 +305,8 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: ${{ fromJSON(env.los) }}
+        # os: ${{ fromJSON(env.los) }}
+        os: [macos-latest, ubuntu-latest, windows-latest]
         c_compiler: [lcc]
         build_type: [Release]
         include:
