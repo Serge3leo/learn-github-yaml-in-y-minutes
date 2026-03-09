@@ -28,46 +28,46 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Acts
-      env:
-        have2: 2
-      shell: bash
-      run: |
-        echo "have1=$have1"
-        echo "have2=$have2"
-
     - uses: actions/checkout@v4
 
-    - name: macOS need `sudo` to create
-      if: steps._.outputs.cache-hit != 'true' && runner.os == 'macOS'
+    - name: Key & path
+      id: i
       shell: bash
       run: |
-        sudo mkdir -p "${{ inputs.location }}"
-        sudo chown runner:staff "${{ inputs.location }}"
+        (
+          echo "key=${{ format('{0}_Learn_GitHub_{1}_{2}',
+                inputs.key-prefix, inputs.version, runner.os) }}"
+          echo "path=${{ inputs.location }}"
+        ) >> $GITHUB_OUTPUT
+
+    - name: macOS need `sudo` to create cache dir
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        sudo mkdir -p "${{ steps.i.outputs.path }}"
+        sudo chown runner:staff "${{ steps.i.outputs.path }}"
 
     - name: Restore cached Learn GitHub directory
       id: _
       if: fromJSON(inputs.cache)
       uses: actions/cache/restore@v5
       with:
-        key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
-          inputs.key-prefix, inputs.version, runner.os) }}
-        path: ${{ inputs.location }}
+        key: ${{ steps.i.outputs.key }}
+        path: ${{ steps.i.outputs.path }}
 
     - name: Install Learn GitHub
       if: steps._.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        mkdir -p "${{ inputs.location }}"
-        cp -r dists/* "${{ inputs.location }}"
+        mkdir -p "${{ steps.i.outputs.path }}"
+        cp -r dists/* "${{ steps.i.outputs.path }}"
 
     - name: Save cached Learn GitHub directory
       if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
       uses: actions/cache/save@v5
       with:
-        key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
-          inputs.key-prefix, inputs.version, runner.os) }}
-        path: ${{ inputs.location }}
+        key: ${{ steps.i.outputs.key }}
+        path: ${{ steps.i.outputs.path }}
 
     - name: Learn GitHub environments variables
       shell: bash
@@ -76,9 +76,10 @@ runs:
         pd="${{ case(runner.os == 'Windows', ';', ':') }}"
         if ${{ runner.os == 'Windows' }} ; then
           MSYS2_ARG_CONV_EXCL='*' MSYS2_ENV_CONV_EXCL='*' \
-            cmd /d /c "${{ inputs.location }}\setvars.bat && python env.py -0"
+            cmd /d /c \
+              "${{ steps.i.outputs.path }}\setvars.bat && python env.py -0"
         else
-          . "${{ inputs.location }}/setvars.sh"
+          . "${{ steps.i.outputs.path }}/setvars.sh"
           env -0
         fi | grep -E -i -z "$ptrn" | tr '\0' '\n' > /tmp/envs
         grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
