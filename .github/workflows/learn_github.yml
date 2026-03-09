@@ -85,9 +85,13 @@ env:
   # Special characters must be enclosed in single or double quotes
   special_characters: "[ John ] & { Jane } - <Doe>"
 
-  # ПРЕДУПРЕЖДЕНИЕ: `printenv` неприменим, следует использовать:
-  #                 - `env -0` (вариант `printenv -0` linux);
-  #                 - запись в `GITHUB_ENV` тоже непроста.
+  # ПРЕДУПРЕЖДЕНИЕ: Для многострочных значений `printenv` неприменим, следует
+  #                 использовать:
+  #                 - `env -0` (вариант для Linux `printenv -0`), ниже
+  #                   `jobs.build.steps.env.env-0-grep-E`;
+  #                 - запись в `GITHUB_ENV` тоже непроста, см. `action.yml` шаг
+  #                   `runs.steps.setvars`.
+  #
   # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#multiline-strings
 
   # Многострочные строковые значения могут быть записаны как 'строковый блок'
@@ -341,10 +345,10 @@ jobs:
           - {c_compiler: lcc}
           - {c_compiler: occ}
           - {c_compiler: pocc}
-          # TODO: давить через переменную
-          # - os: macos-latest
+          # Давим из конфигурации репозитория, можно указать macos-latest
+          - os: ${{ vars.DISABLE_OS }}
 
-        # Но всегда должен быть
+        # Но всегда должна быть
         include: [{os: ubuntu-latest}, {c_compiler: gcc}]
 
     env:
