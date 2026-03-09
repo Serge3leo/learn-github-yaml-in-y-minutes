@@ -16,8 +16,7 @@ inputs:
     required: false
     description: Where to install Learn GitHub
     default: >-
-      ${{ case(runner.os == 'Windows', 'C:\LearnGitHub',
-      '/opt/LearnGitHub') }}
+      ${{ case(runner.os == 'Windows', 'C:\LearnGitHub', '/opt/LearnGitHub') }}
   verbose:
     required: false
     description: Show version and location
@@ -32,13 +31,11 @@ runs:
     - uses: actions/checkout@v4
 
     - name: macOS need `sudo` to create
-      if: steps._.outputs.cache-hit != 'true' && runner.os != 'Windows'
+      if: steps._.outputs.cache-hit != 'true' && runner.os == 'macOS'
       shell: bash
       run: |
         sudo mkdir -p "${{ inputs.location }}"
         sudo chown runner:staff "${{ inputs.location }}"
-        id
-        ls -l /opt
 
     - name: Restore cached Learn GitHub directory
       id: _
