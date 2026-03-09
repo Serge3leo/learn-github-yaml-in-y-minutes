@@ -320,8 +320,12 @@ jobs:
           - {os: windows-latest, c_compiler: gcc}
           - {os: windows-latest, c_compiler: icx}
           - {os: windows-latest, c_compiler: lcc}
-          #
+          # Не нужны для примера
           - {c_compiler: clang}
+          - {c_compiler: icx}
+          - {c_compiler: lcc}
+          - {c_compiler: occ}
+          - {c_compiler: pocc}
           # TODO: давить через переменную
           - os: macos-latest
         include: [{os: ubuntu-latest}, {c_compiler: gcc}]
