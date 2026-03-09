@@ -8,7 +8,7 @@ if NOT exist "%~dp0\bin\learn_github.bat" (
     exit /b 1
 )
 
-rem TODO: WARNING: У %LEARN_GITHUB% остаётся завершающий `\`
-
-set LEARN_GITHUB=%~dp0
+set _LEARN_GITHUB=%~dp0
+set LEARN_GITHUB=%_LEARN_GITHUB:~0,-1%
+set _LEARN_GITHUB=
 PATH %~dp0\bin;%PATH%

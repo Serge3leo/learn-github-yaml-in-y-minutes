@@ -3,14 +3,12 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2026 Сергей Леонтьев (leo@sai.msu.ru)
 
-set -e
-
-r=$(realpath "$0")
+r=$(realpath "${BASH_ARGV[0]}")
 d=$(dirname "$r")
 [ -d "$d/bin" ] || {
     printf "%s: FAIL: %s: не найден\n" "$0" "$d/bin" 1>&2
-    exit 1
+    return 1
 }
-LEARN_GITHUB="$d"
+LEARN_GITHUB="$d" ; export LEARN_GITHUB
 PATH="$d/bin:$PATH"
-exit 0
+return 0
