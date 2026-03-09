@@ -7,6 +7,7 @@ if __name__ == '__main__':
     import os
     import sys
 
+    sys.stdout.reconfigure(encoding='utf-8')
     end = '\n'
     if 1 < len(sys.argv) and "-0" == sys.argv[1]:
         end = '\0'
