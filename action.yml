@@ -17,6 +17,10 @@ inputs:
     description: Where to install Learn GitHub
     default: >-
       ${{ case(runner.os == 'Windows', 'C:\LearnGitHub', '/opt/LearnGitHub') }}
+  use-python:
+    required: false
+    description: Use Python script for update environment variables (multiline)
+    default: true
   verbose:
     required: false
     description: Show version and location
@@ -83,9 +87,38 @@ runs:
         key: ${{ steps.cp.outputs.key }}
         path: ${{ steps.cp.outputs.path }}
 
-    - name: Learn GitHub environments variables
+    - name: Learn GitHub environments variables by bash/cmd
+      if: ${{ !fromJSON(inputs.use-python) }}
       shell: bash
       run: |
+        echo "Learn GitHub environments variables by bash/cmd"
+        ptrn="^(path|learn_github)="
+        pd="${{ case(runner.os == 'Windows', ';', ':') }}"
+        if ${{ runner.os == 'Windows' }} ; then
+          MSYS2_ARG_CONV_EXCL='*' MSYS2_ENV_CONV_EXCL='*' \
+            cmd /d /c \
+              "${{ steps.cp.outputs.path }}\setvars.bat && python env.py -0"
+        else
+          . "${{ steps.cp.outputs.path }}/setvars.sh"
+          env -0
+        fi | grep -E -i -z "$ptrn" | tr '\0' '\n' > /tmp/envs
+        grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
+        sed -n "/^path=\([^${pd}]*\)${pd}.*$/Is//\\1/p" /tmp/envs \
+          | sed '1!G;h;$!d' >> $GITHUB_PATH
+
+        if ${{ fromJSON(inputs.verbose) }} ; then
+          echo GITHUB_ENV=$GITHUB_ENV
+          cat $GITHUB_ENV
+          echo GITHUB_PATH=$GITHUB_PATH
+          cat $GITHUB_PATH
+        fi
+
+    - name: Learn GitHub environments variables by Python
+      if: fromJSON(inputs.use-python)
+      id: setvars
+      shell: bash
+      run: |
+        echo "Learn GitHub environments variables by Python"
         ptrn="^(path|learn_github)="
         pd="${{ case(runner.os == 'Windows', ';', ':') }}"
         if ${{ runner.os == 'Windows' }} ; then
