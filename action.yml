@@ -71,15 +71,17 @@ runs:
 
         ptrn="^(path|learn_github)="
         if ${{ runner.os == 'Windows' }} ; then
-            # TODO env -0, без преобразования переменных или Python скрипт
-            MSYS2_ARG_CONV_EXCL='*' cmd /d /c set \
-              | grep -E -i "$ptrn" | tr -d '\r'
-            echo "cmd...: $?"
-            pd=";"
+          # TODO env -0, без преобразования переменных или Python скрипт
+          MSYS2_ARG_CONV_EXCL='*' \
+            cmd /d /c "${{ inputs.location }}\setvars.bat && set" \
+            | grep -E -i "$ptrn" | tr -d '\r'
+          echo "cmd...: $?"
+          pd=";"
         else
-            env -0 | grep -E -i -z "$ptrn" | tr '\0' '\n'
-            echo "env...: $?"
-            pd=":"
+          . "${{ inputs.location }}/setvars.sh"
+          env -0 | grep -E -i -z "$ptrn" | tr '\0' '\n'
+          echo "env...: $?"
+          pd=":"
         fi > /tmp/envs
         grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
         echo "grep...: $?"
