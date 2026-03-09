@@ -295,7 +295,7 @@ env:
   #   item2: null
   #   item3: null
 
-  los: [macos-latest, ubuntu-latest, windows-latest]
+  los: "[macos-latest, ubuntu-latest, windows-latest]"
 
 jobs:
   build:
@@ -305,7 +305,7 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: ${{ env.los }}
+        os: ${{ fromJSON(env.los) }}
         c_compiler: [lcc]
         build_type: [Release]
         include:
