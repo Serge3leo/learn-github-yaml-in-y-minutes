@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 # SPDX-FileCopyrightText: 2026 Сергей Леонтьев (leo@sai.msu.ru)
 
-name: Рабочий процесс изучения GitHub за Y минут
+name: Рабочий процесс изучения GitHub YAML за Y минут
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -12,6 +12,7 @@ on:  # yamllint disable-line rule:truthy
     branches: ["main"]
 
 env:
+  # Примеры из "Изучите X за Y минут (где X=YAML)"
   # https://github.com/adambard/learnxinyminutes-docs/blob/master/ru/yaml.md
 
   # Комментарий в YAML выглядит как-то так.
@@ -31,6 +32,7 @@ env:
   scientific_notation: 1e+12
   hex_notation: 0x123   # evaluates to 291
   # ПРЕДУПРЕЖДЕНИЕ: GitHub не поддерживает восьмеричные целые
+  #                 octal_notation=123
   octal_notation: 0123  # evaluates to 83
   # Число 1 будет интерпретировано как число, а не как логический тип. Если
   # необходимо чтобы значение было интерпретировано как логическое, необходимо
@@ -39,6 +41,9 @@ env:
   null_value: null
   another_null_value: ~  # TODO ru
   key with spaces: value
+
+  # ПРЕДУПРЕЖДЕНИЕ: GitHub не распознаёт no/yes как boolean
+  # TODO: возможно это устаревшая версия YAML
 
   # Yes and No (doesn't matter the case) will be evaluated to boolean
   # true and false values respectively.
@@ -50,25 +55,29 @@ env:
   # yamllint disable-line rule:truthy
   not_enclosed: yes  # evaluates to "not_enclosed": true
   enclosed: "yes"    # evaluates to "enclosed": yes
-  # ПРЕДУПРЕЖДЕНИЕ: GitHub не распознаёт no/yes как boolean
-  # TODO: возможно это устаревшая версия YAML
 
   # Обратите внимание что строки используются без кавычек, но могут и с
   # кавычками.
   however: 'Строка заключенная в кавычки.'
+
   # ПРЕДУПРЕЖДЕНИЕ: `PowerShell` и `bash` требуют особенного способа доступа к
   #                 `Ключ заключенный в кавычки.`, `single quotes`
+
   'Ключ заключенный в кавычки.': "Полезно если нужно использовать ':' в вашем
     ключе."
   single quotes: 'Содержит ''одну'' экранированную строку'
+
   # ПРЕДУПРЕЖДЕНИЕ: GitHub корректно распознаёт и устанавливает
   #                 `env.double quotes`.  Однако, переменные окружения
   #                 обрезаются по символу `\0`.
+
   double quotes: "Содержит несколько: \", \0, \t, \u263A, \x0d\x0a == \r\n,
     экранированных строк."
 
-  # UTF-8/16/32 characters need to be encoded
   # ПРЕДУПРЕЖДЕНИЕ: GitHub не распознаёт и не декодирует esc-последовательности
+  #                 вне кавычек
+
+  # UTF-8/16/32 characters need to be encoded
   Superscript two: \u00B2
   Superscript two quote: "\u00B2"
   Superscript two UTF-8: ²
@@ -76,16 +85,17 @@ env:
   # Special characters must be enclosed in single or double quotes
   special_characters: "[ John ] & { Jane } - <Doe>"
 
+  # ПРЕДУПРЕЖДЕНИЕ: `printenv` неприменим, следует использовать:
+  #                 - `env -0` (вариант `printenv -0` linux);
+  #                 - запись в `GITHUB_ENV` тоже непроста.
+  # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#multiline-strings
+
   # Многострочные строковые значения могут быть записаны как 'строковый блок'
   # (используя |), или как 'сложенный блок' (используя '>').
   # Multiple-line strings can be written either as a 'literal block' (using |),
   # or a 'folded block' (using '>').  Literal block turn every newline within
   # the string into a literal newline (\n).  Folded block removes newlines
   # within the string.
-  # ПРЕДУПРЕЖДЕНИЕ: `printenv` неприменим, следует использовать:
-  #                 - `env -0` (вариант `printenv -0` linux);
-  #                 - запись в `GITHUB_ENV` тоже непроста.
-  # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#multiline-strings
   literal_block: |
     Значение всего текста в этом блоке будет присвоено ключу 'literal_block',
     с сохранением переноса строк.
@@ -128,8 +138,8 @@ env:
   # Типы коллекций #
   ##################
 
-  # Контекст GitHub `env` не допускает вложенных словарей, но они есть ниже:
-  # `jobs` и т.д.
+  # Контекст GitHub `env` не допускает вложенных словарей, но они есть выше
+  # `on`, и ниже `jobs` и т.д.
 
   # # Вложения используют отступы. Отступ в 2 пробела предпочтителен (но не
   # # обязателен).
@@ -142,7 +152,7 @@ env:
   # В словарях (maps) используются не только строковые значения ключей.
   0.25: a float key
 
-  # Увы, GitHub не поддерживает словари со сложными ключами.
+  # ПРЕДУПРЕЖДЕНИЕ: GitHub не поддерживает словари со сложными ключами.
 
   # # Ключи также могут быть сложными, например многострочными.
   # # Мы используем ? с последующим пробелом, чтобы обозначить начало сложного
@@ -160,7 +170,12 @@ env:
   #   - Real Madrid
   # : [2001-01-01, 2002-02-02]
 
-  # (Line: 148, Col: 5): A sequence was not expected
+  # Примеры '-' синтаксиса простых последовательностей:
+  # - `jobs.build.strategy.matrix.exclude`;
+  # - `jobs.build.steps`.
+  #
+  # TODO: возможны ли в GitHub вложенные последовательности?
+  #
   # # Последовательности (эквивалент списка или массива) выглядят как-то так
   # # (обратите внимание что знак '-' считается отступом):
   # a_sequence:
@@ -176,13 +191,12 @@ env:
   #   - - - Объявления вложенных последовательностей
   #       - могут быть сжаты
 
-  # (Line: 161, Col: 13): A mapping was not expected,
+  # Примеры JSON синтаксиса есть ниже: `job.build.strategy.matrix`.
+
   # # Поскольку YAML это надмножество JSON, вы можете использовать JSON-подобный
   # # синтаксис для словарей и последовательностей:
   # json_map: {"key": "value"}
-  # # (Line: 162, Col: 13): A sequence was not expected
   # json_seq: [3, 2, 1, "takeoff"]
-  # # (Line: 163, Col: 28): A mapping was not expected
   # в данном случае кавычки не обязательны: {key: [3, 2, 1, takeoff]}
 
   ##########################
@@ -190,10 +204,7 @@ env:
   ##########################
 
   # ПРЕДУПРЕЖДЕНИЕ: GitHub не везде принимает якоря, в рабочих процессах
-  #                 принимает, в `action.yml` - нет.
-  #
-  #                 Смотрите: "Example anchors", ниже
-  # https://docs.github.com/en/actions/reference/workflows-and-actions/reusing-workflow-configurations#yaml-anchors-and-aliases
+  #                 принимает, а в `action.yml` - нет.
 
   # Anchors identified by & character which define the value.
   # Aliases identified by * character which acts as "see above" command.
@@ -204,12 +215,18 @@ env:
     ключей.
   other_anchor: *anchor_name
 
+  # Пример якоря смотрите ниже:
+  # - `jobs.build.steps.base`;
+  # - `jobs.build.steps.foo`.
+  #
   # # Якоря могут использоваться для дублирования/наследования свойств
   # base: &base
   #   name: Каждый будет иметь одинаковое имя
 
-  # ПРЕДУПРЕЖДЕНИЕ: У GitHub нет реализации `<<` для слияние словарей
+  # ПРЕДУПРЕЖДЕНИЕ: У GitHub нет реализации `<<` для слияния словарей
   #
+  # https://docs.github.com/en/actions/reference/workflows-and-actions/reusing-workflow-configurations#yaml-anchors-and-aliases
+
   # # Регулярное выражение << называется ключом объединения независимо от типа
   # # языка.  Он используется, чтобы показать что все ключи одного или более
   # # словарей должны быть добавлены в текущий словарь.
@@ -276,17 +293,17 @@ env:
   #   +f/++f/++f/++f/++f/++SH+Dk1hZGUgd2l0aCBHSU1QACwAAAAADAAMAAAFLC
   #   AgjoEwnuNAFOhpEMTRiggcz4BNJHrv/zCFcLiwMWYNG84BwwEeECcgggoBADs=
 
-  # (Line: 254, Col: 5): A mapping was not expected
+  # Похоже, в GitHub использование типа ассоциативных массивов невозможно, да и
+  # не нужно.
+
   # # YAML может использовать объекты типа ассоциативных массивов (set), как
   # # представлено ниже:
   # set:
   #   ? item1
   #   ? item2
   #   ? item3
-  # (Line: 257, Col: 7): A mapping was not expected
   # or: {item1, item2, item3}
 
-  # (Line: 261, Col: 5): A mapping was not expected
   # # Сеты (set) являются простыми эквивалентами словарей со значениями
   # # типа null; запись выше эквивалентна следующей:
   # # Sets are just maps with null values; the above is equivalent to:
@@ -309,8 +326,8 @@ jobs:
         exclude:
           - os: macos-latest
             c_compiler: cl
-          - {os: macos-latest, c_compiler: occ}
-          - {os: macos-latest, c_compiler: pocc}
+          - {"os": "macos-latest", "c_compiler": "occ"}
+          - {'os': 'macos-latest', 'c_compiler': 'pocc'}
           - {os: ubuntu-latest, c_compiler: cl}
           - {os: ubuntu-latest, c_compiler: occ}
           - {os: ubuntu-latest, c_compiler: pocc}
