@@ -27,9 +27,6 @@ inputs:
     default: 0.1.1
 runs:
   using: composite
-  env:
-    have1: 1
-
   steps:
     - name: Acts
       env:
