@@ -307,8 +307,8 @@ jobs:
       matrix:
         # os: ${{ fromJSON(env.los) }}
         # os: [macos-latest, ubuntu-latest, windows-latest]
-        os: case(true, [macos-latest, ubuntu-latest, windows-latest],
-          [macos-latest])
+        os: ${{ case(true, [macos-latest, ubuntu-latest, windows-latest],
+          [macos-latest]) }}
         c_compiler: [lcc]
         build_type: [Release]
         include:
