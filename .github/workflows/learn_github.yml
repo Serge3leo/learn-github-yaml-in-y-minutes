@@ -306,11 +306,8 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
         include:
           - os: macos-latest
-            platform: "darwin"
           - os: ubuntu-latest
-            platform: "linux"
           - os: windows-latest
-            platform: "win32"
         exclude:
           - os: macos-latest
           - os: windows-latest
@@ -348,7 +345,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Lint
-        if: ${{ matrix.platform != 'win32' }}
+        if: runner.os == 'Windows'  # И так притормаживает
         run: |
           python -m pip install yamllint
           python -m yamllint --list-file .
@@ -386,7 +383,7 @@ jobs:
           "double quotes=${env:double quotes}"
           "literal_block=$env:literal_block"
 
-      - if: ${{ matrix.platform == 'win32' }}
+      - if: runner.os == 'Windows'
         shell: cmd
         run: |
           echo "key=%key%"
