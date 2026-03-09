@@ -405,4 +405,5 @@ jobs:
         run: |
           learn_github
 
-      - {*base, shell: bash}
+      - *base
+        shell: bash
