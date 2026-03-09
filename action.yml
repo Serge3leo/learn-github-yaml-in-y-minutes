@@ -41,7 +41,7 @@ runs:
       id: _
       if: fromJSON(inputs.cache)
       uses: actions/cache/restore@v5
-      with:
+      with: &with-key-path
         key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
           inputs.key-prefix, inputs.version, runner.os) }}
         path: ${{ inputs.location }}
@@ -57,9 +57,7 @@ runs:
       if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
       uses: actions/cache/save@v5
       with:
-        key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
-          inputs.key-prefix, inputs.version, runner.os) }}
-        path: ${{ inputs.location }}
+        <<: *with-key-path
 
     - name: Learn GitHub environments variables
       shell: bash
