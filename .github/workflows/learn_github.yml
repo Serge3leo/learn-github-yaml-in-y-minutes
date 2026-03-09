@@ -299,7 +299,7 @@ env:
 
 jobs:
   build:
-    if: matrix.os == "ubuntu-latest"
+    if: matrix.os == 'ubuntu-latest'
     # if: runner.os == 'Windows'
 
     runs-on: ${{ matrix.os }}
