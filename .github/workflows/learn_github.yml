@@ -407,8 +407,7 @@ jobs:
           learn_github
 
       - name: Test Learn GitHub
-        env:  # &foo
-          <<: *base
+        env: *base
           age: 10
         if: runner.os != 'Windows'
         shell: bash
