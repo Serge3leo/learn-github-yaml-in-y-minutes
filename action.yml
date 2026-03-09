@@ -24,7 +24,7 @@ inputs:
   version:
     required: false
     description: A specific version to install
-    default: 0.1.0
+    default: 0.1.1
 runs:
   using: composite
   steps:
