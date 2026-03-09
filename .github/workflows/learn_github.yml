@@ -401,27 +401,16 @@ jobs:
           verbose: true
 
       - name: Test Learn GitHub
-        env: &base
-          name: Каждый будет иметь одинаковое имя
         run: |
           learn_github
 
-      - name: Test Learn GitHub
-        env: *base
-          age: 10
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          learn_github
+  test: &base_job # Define the anchor on first use
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NODE_VERSION: '18'
+    steps:
+      - name: Set up Node.js
+      - run: npm test
 
-      - name: Test Learn GitHub
-        env:  # &bar
-          # <<: *base
-          age: 20
-        if: runner.os == 'Windows'
-        shell: cmd
-        run: |
-          echo "PATH=%PATH%"
-          echo "---"
-          echo "LEARN_GITHUB=%LEARN_GITHUB%"
-          learn_github
+  alt-test: *base_job # Reuse the entire job configuration
