@@ -1,6 +1,6 @@
 ---
-name: Test Learn GitHub
-description: Internal action of Learn GitHub in Y minutes
+name: Test Learn GitHub YAML
+description: Internal action of Learn GitHub YAML in Y minutes
 branding:
   color: blue
   icon: terminal
