@@ -40,15 +40,18 @@ runs:
           inputs.key-prefix, inputs.version, runner.os) }}
         path: ${{ inputs.location }}
 
+    - name: macOS need `sudo` to create
+      if: steps._.outputs.cache-hit != 'true' && runner.os != 'Windows'
+      shell: bash
+      run: |
+        sudo mkdir -p "${{ inputs.location }}"
+        sudo chmod 777 "${{ inputs.location }}"
+
     - name: Install Learn GitHub
       if: steps._.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        if ${{ runner.os == 'macOS' }} ; then
-          sudo cp -r dists "${{ inputs.location }}"
-        else
-          cp -r dists "${{ inputs.location }}"
-        fi
+        cp -r dists "${{ inputs.location }}"
 
     - name: Save cached Learn GitHub directory
       if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
@@ -61,19 +64,28 @@ runs:
     - name: Learn GitHub environments variables
       shell: bash
       run: |
+        set -e
+        set +x
+
+        echo "Learn GitHub environments variables"
+
         ptrn="^(path|learn_github)="
-        if [ "MINGW64_NT-10.0-19045" == "`uname -s`" ] ; then
+        if ${{ runner.os == 'Windows' }} ; then
             # TODO env -0, без преобразования переменных или Python скрипт
             MSYS2_ARG_CONV_EXCL='*' cmd /d /c set \
               | grep -E -i "$ptrn" | tr -d '\r'
+            echo "cmd...: $?"
             pd=";"
         else
             env -0 | grep -E -i -z "$ptrn" | tr '\0' '\n'
+            echo "env...: $?"
             pd=":"
         fi > /tmp/envs
         grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
+        echo "grep...: $?"
         sed -n "/^path=\([^${pd}]*\)${pd}.*$/Is//\\1/p" /tmp/envs \
           | tail -r >> $GITHUB_PATH
+        echo "sed...: $?"
 
         if ${{ fromJSON(inputs.verbose) }} ; then
           echo GITHUB_ENV=$GITHUB_ENV
