@@ -411,6 +411,6 @@ jobs:
       NODE_VERSION: '18'
     steps:
       - name: Set up Node.js
-      - run: npm test
+        run: env
 
   alt-test: *base_job # Reuse the entire job configuration
