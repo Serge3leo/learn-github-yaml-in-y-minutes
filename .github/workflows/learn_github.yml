@@ -327,7 +327,9 @@ jobs:
           - {c_compiler: occ}
           - {c_compiler: pocc}
           # TODO: давить через переменную
-          - os: macos-latest
+          # - os: macos-latest
+
+        # Но всегда должен быть
         include: [{os: ubuntu-latest}, {c_compiler: gcc}]
 
     env:
