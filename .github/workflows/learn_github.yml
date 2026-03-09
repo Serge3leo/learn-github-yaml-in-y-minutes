@@ -401,22 +401,22 @@ jobs:
           verbose: true
 
       - name: Test Learn GitHub
-        env: &base
+        env:  # &base
           name: Каждый будет иметь одинаковое имя
         run: |
           learn_github
 
       - name: Test Learn GitHub
-        env: &foo
-          <<: *base
+        env:  # &foo
+          # <<: *base
           age: 10
         shell: bash
         run: |
           learn_github
 
       - name: Test Learn GitHub
-        env: &bar
-          <<: *base
+        env:  # &bar
+          # <<: *base
           age: 20
         shell: cmd
         run: |
