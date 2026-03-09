@@ -42,9 +42,9 @@ runs:
       if: fromJSON(inputs.cache)
       uses: actions/cache/restore@v5
       with:
-        key: &key ${{ format('{0}_Learn_GitHub_{1}_{2}',
+        key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
           inputs.key-prefix, inputs.version, runner.os) }}
-        path: &path ${{ inputs.location }}
+        path: ${{ inputs.location }}
 
     - name: Install Learn GitHub
       if: steps._.outputs.cache-hit != 'true'
@@ -57,8 +57,10 @@ runs:
       if: steps._.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
       uses: actions/cache/save@v5
       with:
-        key: *key
-        path: *path
+        key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
+          inputs.key-prefix, inputs.version, runner.os) }}
+        path: ${{ inputs.location }}
+
     - name: Learn GitHub environments variables
       shell: bash
       run: |
