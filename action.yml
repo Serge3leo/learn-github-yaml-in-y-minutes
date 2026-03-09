@@ -51,9 +51,15 @@ runs:
       id: cr
       if: fromJSON(inputs.cache)
       uses: actions/cache/restore@v5
-      with: &cache_param
-        key: ${{ steps.cp.outputs.key }}
-        path: ${{ steps.cp.outputs.path }}
+      # Не поддерживается GitHub: Anchors are not currently supported
+      # with: &cache_param
+      #   key: ${{ format('{0}_Learn_GitHub_{1}_{2}',
+      #            inputs.key-prefix, inputs.version, runner.os) }}
+      #   path: ${{ steps.cp.outputs.path }}
+      with:
+        key: &cache_key ${{ format('{0}_Learn_GitHub_{1}_{2}',
+          inputs.key-prefix, inputs.version, runner.os) }}
+        path: &cache_path ${{ inputs.location }}
       # with:
       #   key: ${{ steps.cp.outputs.key }}
       #   path: ${{ steps.cp.outputs.path }}
@@ -68,7 +74,11 @@ runs:
     - name: Save cached Learn GitHub directory
       if: steps.cr.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
       uses: actions/cache/save@v5
-      with: *cache_param
+      # Не поддерживается GitHub: Anchors are not currently supported
+      # with: *cache_param
+      with:
+        key: *cache_key
+        path: *cache_path
       # with:
       #   key: ${{ steps.cp.outputs.key }}
       #   path: ${{ steps.cp.outputs.path }}
