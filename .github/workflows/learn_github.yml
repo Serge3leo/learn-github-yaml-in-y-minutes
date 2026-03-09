@@ -299,6 +299,9 @@ env:
 
 jobs:
   build:
+    # if: matrix.os == "ubuntu-latest"
+    if: runner.os == 'Windows'
+
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -306,9 +309,7 @@ jobs:
 
       matrix:
         # os: ${{ fromJSON(env.los) }}
-        # os: [macos-latest, ubuntu-latest, windows-latest]
-        os: ${{ case(true, [macos-latest, ubuntu-latest, windows-latest],
-          [macos-latest]) }}
+        os: [macos-latest, ubuntu-latest, windows-latest]
         c_compiler: [lcc]
         build_type: [Release]
         include:
