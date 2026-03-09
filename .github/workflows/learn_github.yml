@@ -187,6 +187,10 @@ env:
   # Дополнительные функции #
   ##########################
 
+  # ПРЕДУПРЕЖДЕНИЕ: GitHub не везде принимает якоря, в рабочих процессах
+  #                 принимает, в `action.yml` - нет.
+  # https://docs.github.com/en/actions/reference/workflows-and-actions/reusing-workflow-configurations#yaml-anchors-and-aliases
+
   # Anchors identified by & character which define the value.
   # Aliases identified by * character which acts as "see above" command.
   # В YAML есть удобная система так называемых 'якорей' (anchors), которые
