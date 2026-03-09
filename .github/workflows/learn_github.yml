@@ -191,6 +191,8 @@ env:
 
   # ПРЕДУПРЕЖДЕНИЕ: GitHub не везде принимает якоря, в рабочих процессах
   #                 принимает, в `action.yml` - нет.
+  #
+  #                 Смотрите: "Example anchors", ниже
   # https://docs.github.com/en/actions/reference/workflows-and-actions/reusing-workflow-configurations#yaml-anchors-and-aliases
 
   # Anchors identified by & character which define the value.
@@ -202,12 +204,12 @@ env:
     ключей.
   other_anchor: *anchor_name
 
-  # Anchors are not currently supported. Remove the anchor '...'
-  # (Line: 185, Col: 9): A mapping was not expected
   # # Якоря могут использоваться для дублирования/наследования свойств
   # base: &base
   #   name: Каждый будет иметь одинаковое имя
 
+  # ПРЕДУПРЕЖДЕНИЕ: У GitHub нет реализации `<<` для слияние словарей
+  #
   # # Регулярное выражение << называется ключом объединения независимо от типа
   # # языка.  Он используется, чтобы показать что все ключи одного или более
   # # словарей должны быть добавлены в текущий словарь.
@@ -216,12 +218,10 @@ env:
   # # inserted into the current map.
   # # NOTE: If key already exists alias will not be merged
   # foo:
-  #   # (Line: 193, Col: 5): A mapping was not expected
   #   <<: *base  # doesn't merge the anchor
   #   age: 10
   #   name: John
   # bar:
-  #   # (Line: 197, Col: 5): A mapping was not expected
   #   <<: *base  # base anchor will be merged
   #   age: 20
 
@@ -404,15 +404,18 @@ jobs:
         run: |
           learn_github
 
-  base: &base
-    runs-on: ubuntu-latest
-    env:
-      NODE_VERSION: '18'
-    steps:
-      - name: Set up Node.js
-        run: echo "NODE_VERSION=$NODE_VERSION"
+      - name: Example anchors, base
+        env: &base
+          name: Каждый будет иметь одинаковое имя
+        run: echo "$name"
 
-  foo: &foo
-    <<: *base
-    env:
-      NODE_VERSION: '20'
+      - name: Example anchors, foo
+        env: *base
+        run: echo "$name"
+
+#     # У GitHub не реализовано слияние словарей
+#     - name: Test anchors, bar
+#       env:
+#         <<: *base
+#         age: 20
+#       run: echo "$name"
