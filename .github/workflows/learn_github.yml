@@ -311,6 +311,9 @@ jobs:
             cpp_compiler: l++
             os: ubuntu-latest
             platform: "e2k"
+          - c_compiler: occ
+            cpp_compiler: occ
+            os: windows-latest
         exclude: [{os: macos-latest}, {os: windows-latest}]
 
     env:
