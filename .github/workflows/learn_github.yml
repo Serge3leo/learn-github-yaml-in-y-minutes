@@ -400,6 +400,9 @@ jobs:
           # cache: false
           verbose: true
 
-      - name: Test Learn GitHub
+      - &base
+        name: Test Learn GitHub
         run: |
           learn_github
+
+      - << *base
