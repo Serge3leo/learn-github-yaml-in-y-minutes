@@ -37,6 +37,8 @@ runs:
       run: |
         sudo mkdir -p "${{ inputs.location }}"
         sudo chmod 777 "${{ inputs.location }}"
+        id
+        ls -l /opt
 
     - name: Restore cached Learn GitHub directory
       id: _
@@ -64,30 +66,21 @@ runs:
     - name: Learn GitHub environments variables
       shell: bash
       run: |
-        set -e
-        set +x
-
-        echo "Learn GitHub environments variables"
-
         ptrn="^(path|learn_github)="
         if ${{ runner.os == 'Windows' }} ; then
           # TODO env -0, без преобразования переменных или Python скрипт
           MSYS2_ARG_CONV_EXCL='*' \
             cmd /d /c "${{ inputs.location }}\setvars.bat && set" \
             | grep -E -i "$ptrn" | tr -d '\r'
-          echo "cmd...: $?" 1>&2
           pd=";"
         else
           . "${{ inputs.location }}/setvars.sh"
           env -0 | grep -E -i -z "$ptrn" | tr '\0' '\n'
-          echo "env...: $?" 1>&2
           pd=":"
         fi > /tmp/envs
         grep -v -i "^path=" /tmp/envs >> $GITHUB_ENV
-        echo "grep...: $?"
         sed -n "/^path=\([^${pd}]*\)${pd}.*$/Is//\\1/p" /tmp/envs \
           | sed '1!G;h;$!d' >> $GITHUB_PATH
-        echo "sed...: $?"
 
         if ${{ fromJSON(inputs.verbose) }} ; then
           echo GITHUB_ENV=$GITHUB_ENV
