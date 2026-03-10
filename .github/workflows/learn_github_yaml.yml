@@ -435,7 +435,9 @@ jobs:
       - name: Test action Learn GitHub
         uses: ./
         with:
+          # Для отладки, которые не по умолчанию,, можно убрать комментарий
           # cache: false
+          # use-python: false
           verbose: true
 
       - name: Test Learn GitHub

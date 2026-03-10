@@ -17,6 +17,10 @@ inputs:
     description: Where to install Learn GitHub
     default: >-
       ${{ case(runner.os == 'Windows', 'C:\LearnGitHub', '/opt/LearnGitHub') }}
+  use-python:
+    required: false
+    description: Use Python script for update environment variables (multiline)
+    default: true
   verbose:
     required: false
     description: Show version and location
@@ -24,7 +28,7 @@ inputs:
   version:
     required: false
     description: A specific version to install
-    default: 0.1.1
+    default: 0.1.3
 runs:
   using: composite
   steps:
@@ -83,9 +87,19 @@ runs:
         key: ${{ steps.cp.outputs.key }}
         path: ${{ steps.cp.outputs.path }}
 
-    - name: Learn GitHub environments variables
+    - name: Learn GitHub environments variables by bash/cmd
+      if: ${{ !fromJSON(inputs.use-python) }}
       shell: bash
       run: |
+        if "${{ fromJSON(inputs.verbose) }}" ; then
+          echo "Learn GitHub environments variables by bash/cmd"
+        fi
+
+        # ПРЕДУПРЕЖДЕНИЕ: 1. Этот вариант предполагает, что `setvars.*` не
+        #                    определяют многострочных переменных окружения;
+        #                 2. Переменные, согласно списка;
+        #                 3. Предполагается, только один элемент PATH, первый.
+
         ptrn="^(path|learn_github)="
         pd="${{ case(runner.os == 'Windows', ';', ':') }}"
         if ${{ runner.os == 'Windows' }} ; then
@@ -106,6 +120,72 @@ runs:
           echo GITHUB_PATH=$GITHUB_PATH
           cat $GITHUB_PATH
         fi
+
+    - name: Learn GitHub environments variables by Python
+      if: fromJSON(inputs.use-python)
+      id: setvars
+      shell: python -X utf8 {0}
+      run: |
+        if "true" == "${{ fromJSON(inputs.verbose) }}":
+          print("Learn GitHub environments variables by Python")
+
+        # А это строгий вариант, с обработкой, как многострочных строк, так и
+        # произвольного PATH
+
+        import os
+        import platform
+        import re
+        import uuid
+
+        dlmt = uuid.uuid4()
+        if "Windows" == platform.system():
+          cmd = ("@${{ steps.cp.outputs.path }}\\setvars.bat"
+                 " && @python env.py -0")
+          pd = ";"
+          ign = set()
+        else:
+          cmd = "bash -c '. ${{ steps.cp.outputs.path }}/setvars.sh && env -0'"
+          pd = ":"
+          ign = {"SHLVL", "_"}
+        with os.popen(cmd) as f, \
+             open(os.environ["GITHUB_ENV"], mode="a") as fe, \
+             open(os.environ["GITHUB_PATH"], mode="a") as fp:
+          for l in f.buffer.read().split(b"\0"):
+            if not l:
+              # print("Empty: {l=}")
+              continue
+            m = re.match(r"([^=]*)=(.*)$", l.decode(), flags=re.DOTALL)
+            assert m, f"pm.py: Don't match VAR=VALUE {l, l.decode(), m=}"
+            if "path" == m.group(1).lower():
+              o = (os.environ["PATH"] if "PATH" in os.environ else
+                   os.environ["Path"])
+              n = m.group(2)
+              oi, ni = len(o), len(n)
+              while (oi and ni and o[oi:].lower() == n[ni:].lower()):
+                # print(f"{oi, ni, o[oi:], n[ni:]=}")
+                oi = max(0, o.rfind(pd, 0, oi))
+                np = ni
+                ni = max(0, n.rfind(pd, 0, np))
+              if ni:
+                assert -1 == np or len(n) == np or n[np] == pd
+                # TODO в случае, если PATH изменился с конца, он дублируется
+                for d in n[:(np if 0 < np else len(n))].split(pd)[::-1]:
+                  print(d, file=fp)
+            elif (m.group(1) not in os.environ or
+                  os.environ[m.group(1)].lower() != m.group(2).lower()
+                 ) and m.group(1) not in ign:
+              if '\n' not in m.group(2):
+                print(f"{m.group(1)}={m.group(2)}", file=fe)
+              else:
+                print(f"{m.group(1)}<<{dlmt}\n{m.group(2)}\n{dlmt}", file=fe)
+
+        if "true" == "${{ fromJSON(inputs.verbose) }}":
+          print(f"{os.environ["GITHUB_ENV"]=}")
+          with open(os.environ["GITHUB_ENV"]) as fe:
+            print(fe.read())
+          print(f"{os.environ["GITHUB_PATH"]=}")
+          with open(os.environ["GITHUB_PATH"]) as fp:
+            print(fp.read())
 
     - name: Show version for bash
       if: fromJSON(inputs.verbose) && runner.os != 'Windows'
