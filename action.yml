@@ -118,7 +118,7 @@ runs:
     - name: Learn GitHub environments variables by Python
       if: fromJSON(inputs.use-python)
       id: setvars
-      shell: python
+      shell: python -X utf8 {0}
       run: |
         if "true" == "${{ fromJSON(inputs.verbose) }}":
           print("Learn GitHub environments variables by Python")
