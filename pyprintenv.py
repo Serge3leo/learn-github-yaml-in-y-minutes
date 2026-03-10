@@ -73,14 +73,14 @@ def trace(cmd: str, path: bool, encoding: str = None, shell: str = None,
           github_env: str = None, github_path: str = None) -> None:
     dlmt = uuid.uuid4()
     if "Windows" == platform.system():
-        cmd = f"@{cmd} && @python pyprintenv.py -0"
+        cmd = f"@{cmd} && @python pyprintenv.py -0 --encoding=utf-8"
         pd = ";"
         ign = set()
     else:
         if not shell:
-            cmd = f"{cmd} && env -0"
+            cmd = f"{cmd} && python pyprintenv.py -0 --encoding=utf-8"
         else:
-            cmd = f"{shell} -c '{cmd} && env -0'"
+            cmd = f"{shell} -c '{cmd} && python pyprintenv.py -0 --encoding=utf-8'"
         pd = ":"
         ign = {"SHLVL", "_"}
     with os.popen(cmd) as f, \
@@ -93,7 +93,7 @@ def trace(cmd: str, path: bool, encoding: str = None, shell: str = None,
                 # print("Empty: {l=}")
                 continue
             m = re.match(r"([^=]*)=(.*)$",
-                    l.decode(encoding=locale.getpreferredencoding()),  # TODO
+                    l.decode(),  # TODO
                     flags=re.DOTALL)
             if not m:
                 raise ValueError(f"Don't match VAR=VALUE {l, l.decode(), m=}")
