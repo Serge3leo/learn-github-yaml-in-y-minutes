@@ -61,11 +61,9 @@ def printenv(fmt: OutputFormat, variables: list[str] = None,
 def _open_env(file: 'file name', env: str, **kwargs) -> 'file object':
     if not file:
         if env not in os.environ:
-            print(f"{file, env, kwargs['encoding'] if 'encoding' in kwargs else 'none'=}", file=sys.stderr)
             if 'encoding' in kwargs:
                 sys.stdout.reconfigure(encoding=kwargs['encoding'])
             return sys.stdout
-        print(f"{file, env, os.environ[env]=}", file=sys.stderr)
         file = os.environ[env]
     return open(file, **kwargs)
 
@@ -73,14 +71,14 @@ def trace(cmd: str, path: bool, encoding: str = None, shell: str = None,
           github_env: str = None, github_path: str = None) -> None:
     dlmt = uuid.uuid4()
     if "Windows" == platform.system():
-        cmd = f"@{cmd} && @python pyprintenv.py -0 --encoding=utf-8"
+        cmd = f"@{cmd} && @{sys.executable} pyprintenv.py -0 --encoding=utf-8"
         pd = ";"
         ign = set()
     else:
         if not shell:
-            cmd = f"{cmd} && python pyprintenv.py -0 --encoding=utf-8"
+            cmd = f"{cmd} && {sys.executable} pyprintenv.py -0 --encoding=utf-8"
         else:
-            cmd = f"{shell} -c '{cmd} && python pyprintenv.py -0 --encoding=utf-8'"
+            cmd = f"{shell} -c '{cmd} && {sys.executable} pyprintenv.py -0 --encoding=utf-8'"
         pd = ":"
         ign = {"SHLVL", "_"}
     with os.popen(cmd) as f, \
