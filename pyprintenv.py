@@ -118,7 +118,7 @@ def trace(cmd: str, path: bool, encoding: str = None, shell: str = None,
                   os.environ[m.group(1)].lower() != m.group(2).lower()
                  ) and m.group(1) not in ign:
                 print(_str_variable(OutputFormat.MULTILINE,
-                                    m.group(1), m.group(2)), end='')
+                                    m.group(1), m.group(2)), end='', file=fe)
 
 if __name__ == '__main__':
     import argparse
