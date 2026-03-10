@@ -173,7 +173,7 @@ runs:
             print(fe.read())
           print(f"{os.environ["GITHUB_PATH"]=}")
           with open(os.environ["GITHUB_PATH"]) as fp:
-            print(fe.read())
+            print(fp.read())
 
     - name: Show version for bash
       if: fromJSON(inputs.verbose) && runner.os != 'Windows'
