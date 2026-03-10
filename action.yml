@@ -143,7 +143,7 @@ runs:
              open(os.environ["GITHUB_PATH"], mode="a") as fp:
           for l in f.buffer.read().split(b"\0"):
             if not l:
-              print("Empty: {l=}")
+              # print("Empty: {l=}")
               continue
             m = re.match(r"([^=]*)=(.*)$", l.decode(), flags=re.DOTALL)
             assert m, f"pm.py: Don't match VAR=VALUE {l, l.decode(), m=}"
