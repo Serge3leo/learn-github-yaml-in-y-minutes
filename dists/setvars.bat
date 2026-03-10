@@ -12,6 +12,6 @@ set _LEARN_GITHUB=%~dp0
 set LEARN_GITHUB=%_LEARN_GITHUB:~0,-1%
 set _LEARN_GITHUB=
 PATH %~dp0\bin;%PATH%
-PATH c:\none;%PATH%
+rem PATH c:\none;%PATH%
 rem PATH %PATH%;%~dp0\bin
 rem TODO LEARN_GITHUB_ML

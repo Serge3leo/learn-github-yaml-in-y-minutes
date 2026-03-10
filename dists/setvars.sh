@@ -11,7 +11,7 @@ d=$(dirname "$r")
 }
 LEARN_GITHUB="$d" ; export LEARN_GITHUB
 PATH="$d/bin:$PATH"
-PATH="/opt/none:$PATH"
+# PATH="/opt/none:$PATH"
 # PATH="$PATH:$d/bin"
 LEARN_GITHUB_ML="lg line1
 lg line2
