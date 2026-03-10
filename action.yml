@@ -155,10 +155,11 @@ runs:
               while (oi and ni and o[oi:].lower() == n[ni:].lower()):
                 # print(f"{oi, ni, o[oi:], n[ni:]=}")
                 oi = max(0, o.rfind(pd, 0, oi))
-                ni = max(0, n.rfind(pd, 0, ni))
+                np = ni
+                ni = max(0, n.rfind(pd, 0, np))
               if ni:
-                assert -1 == ni or n[ni] == pd
-                for d in n[:(ni if 0 < ni else len(n))].split(pd)[::-1]:
+                assert -1 == np or len(n) == np or n[np] == pd
+                for d in n[:(np if 0 < np else len(n))].split(pd)[::-1]:
                   print(d, file=fp)
             elif (m.group(1) not in os.environ or
                   os.environ[m.group(1)].lower() != m.group(2).lower()
