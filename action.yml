@@ -133,7 +133,7 @@ runs:
         if ${{ runner.os == 'Windows' }} ; then
           python pyprintenv.py \
             --trace "${{ steps.cp.outputs.path }}\\setvars.bat"
-        else:
+        else
           python pyprintenv.py --shell bash \
             --trace ". ${{ steps.cp.outputs.path }}/setvars.sh"
         fi
