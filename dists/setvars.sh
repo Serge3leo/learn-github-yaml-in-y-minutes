@@ -10,9 +10,9 @@ d=$(dirname "$r")
     return 1
 }
 LEARN_GITHUB="$d" ; export LEARN_GITHUB
-# PATH="$d/bin:$PATH"
-# PATH="/opt/none:$PATH"
-PATH="$PATH:$d/bin"
+PATH="$d/bin:$PATH"
+PATH="/opt/none:$PATH"
+# PATH="$PATH:$d/bin"
 LEARN_GITHUB_ML="lg line1
 lg line2
 lg line3" ; export LEARN_GITHUB_ML

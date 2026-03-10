@@ -159,6 +159,7 @@ runs:
                 ni = max(0, n.rfind(pd, 0, np))
               if ni:
                 assert -1 == np or len(n) == np or n[np] == pd
+                # TODO в случае, если PATH изменился с конца, он дублируется
                 for d in n[:(np if 0 < np else len(n))].split(pd)[::-1]:
                   print(d, file=fp)
             elif (m.group(1) not in os.environ or
