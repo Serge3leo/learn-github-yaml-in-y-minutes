@@ -123,19 +123,19 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("variables", nargs='*',
-                        help="Environment variables", default=None)
+                        help="environment variables", default=None)
     parser.add_argument("-0", "--null", action='store_true',
-                        help="End each output line with NUL, not newline")
+                        help="end each output line with NUL, not newline")
     parser.add_argument("-g", "--github-multiline", action='store_true',
-                        help="Output multiline strings as GitHub Actions")
+                        help="output multiline strings as GitHub Actions")
     parser.add_argument("--encoding",
-                        help="Output encoding (utf-8, ...)")
+                        help="output encoding (utf-8, ...)")
     parser.add_argument("--trace",
-                        help="Command to trace environment")
+                        help="command to trace environment")
     parser.add_argument("--path", action='store_true',
-                        help="Store PATH separately, in GITHUB_PATH")
+                        help="store PATH separately, in GITHUB_PATH")
     parser.add_argument("--shell",
-                        help=("Shell to start cmd"
+                        help=("shell to start cmd"
                               if "Windows" != platform.system()
                               else argparse.SUPPRESS))  # TODO
     parser.add_argument("--github-env",
