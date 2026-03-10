@@ -23,11 +23,11 @@ __version__ = "$Revision: 0 $"
 __author__ = ("Сергей Леонтьев (leo@sai.msu.ru)")
 
 import enum
-import locale
 import os
 import platform
 import re
 import sys
+import typing
 import uuid
 
 class OutputFormat(enum.Enum):
@@ -58,7 +58,7 @@ def printenv(fmt: OutputFormat, variables: list[str] = None,
         if v in os.environ:
             print(_str_variable(fmt, v, os.environ[v]), end='')
 
-def _open_env(file: 'file name', env: str, **kwargs) -> 'file object':
+def _open_env(file: str, env: str, **kwargs) -> typing.IO[typing.AnyStr]:
     if not file:
         if env not in os.environ:
             if 'encoding' in kwargs:
@@ -69,7 +69,6 @@ def _open_env(file: 'file name', env: str, **kwargs) -> 'file object':
 
 def trace(cmd: str, path: bool, encoding: str = None, shell: str = None,
           github_env: str = None, github_path: str = None) -> None:
-    dlmt = uuid.uuid4()
     if "Windows" == platform.system():
         cmd = f"@{cmd} && @{sys.executable} pyprintenv.py -0 --encoding=utf-8"
         pd = ";"
@@ -81,20 +80,21 @@ def trace(cmd: str, path: bool, encoding: str = None, shell: str = None,
             cmd = f"{shell} -c '{cmd} && {sys.executable} pyprintenv.py -0 --encoding=utf-8'"
         pd = ":"
         ign = {"SHLVL", "_"}
-    with os.popen(cmd) as f, \
+    with os.popen(cmd) as fi, \
          _open_env(github_env, "GITHUB_ENV", mode="a",
                    encoding=encoding) as fe, \
          _open_env(github_path, "GITHUB_PATH", mode="a",
                    encoding=encoding) as fp:
-        for l in f.buffer.read().split(b"\0"):
-            if not l:
-                # print("Empty: {l=}")
+        for line in fi.buffer.read().split(b"\0"):
+            if not line:
+                # print("Empty: {line=}")
                 continue
             m = re.match(r"([^=]*)=(.*)$",
-                    l.decode(),  # TODO
+                    line.decode(),  # TODO
                     flags=re.DOTALL)
             if not m:
-                raise ValueError(f"Don't match VAR=VALUE {l, l.decode(), m=}")
+                raise ValueError(
+                        f"Don't match VAR=VALUE {line, line.decode(), m=}")
             if path and "path" == m.group(1).lower():
                 o = (os.environ["PATH"] if "PATH" in os.environ else
                      os.environ["Path"])
