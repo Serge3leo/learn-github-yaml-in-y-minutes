@@ -158,7 +158,7 @@ runs:
                 ni = max(0, n.rfind(pd, 0, ni))
               if ni:
                 assert -1 == ni or n[ni] == pd
-                for d in n[:(ni if 0 < ni else len(n)].split(pd)[::-1]:
+                for d in n[:(ni if 0 < ni else len(n))].split(pd)[::-1]:
                   print(d, file=fp)
             elif (m.group(1) not in os.environ or
                   os.environ[m.group(1)].lower() != m.group(2).lower()
