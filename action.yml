@@ -7,8 +7,9 @@ branding:
 inputs:
   cache:
     required: false
-    description: If caching should be used
-    default: true
+    description: >
+      0 - no cache, 1 - stupid cache, 2 - restore-save cache in action time
+    default: 2
   key-prefix:
     required: false
     description: Add prefix to cache key (for refresh or identification)
@@ -53,7 +54,7 @@ runs:
 
     - name: Restore cached Learn GitHub directory
       id: cr
-      if: fromJSON(inputs.cache)
+      if: inputs.cache == 2
       uses: actions/cache/restore@v5
       # Не поддерживается в actions.yml: Anchors are not currently supported
       # with: &cache_param
@@ -68,15 +69,24 @@ runs:
         key: ${{ steps.cp.outputs.key }}
         path: ${{ steps.cp.outputs.path }}
 
+    - name: Cache Learn GitHub directory
+      id: c
+      if: inputs.cache == 1
+      uses: actions/cache@v5
+      with:
+        key: ${{ steps.cp.outputs.key }}
+        path: ${{ steps.cp.outputs.path }}
+
     - name: Install Learn GitHub
       if: steps.cr.outputs.cache-hit != 'true'
+        && steps.c.outputs.cache-hit != 'true'
       shell: bash
       run: |
         mkdir -p "${{ steps.cp.outputs.path }}"
         cp -r dists/* "${{ steps.cp.outputs.path }}"
 
     - name: Save cached Learn GitHub directory
-      if: steps.cr.outputs.cache-hit != 'true' && fromJSON(inputs.cache)
+      if: steps.cr.outputs.cache-hit != 'true' && inputs.cache == 2
       uses: actions/cache/save@v5
       # Не поддерживается в actions.yml: Anchors are not currently supported
       # with: *cache_param
