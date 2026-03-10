@@ -104,8 +104,8 @@ runs:
         pd="${{ case(runner.os == 'Windows', ';', ':') }}"
         if ${{ runner.os == 'Windows' }} ; then
           MSYS2_ARG_CONV_EXCL='*' MSYS2_ENV_CONV_EXCL='*' \
-            cmd /d /c \
-              "${{ steps.cp.outputs.path }}\setvars.bat && python env.py -0"
+          cmd /d /c \
+          "${{ steps.cp.outputs.path }}\\setvars.bat && python pyprintenv.py -0"
         else
           . "${{ steps.cp.outputs.path }}/setvars.sh"
           env -0
@@ -124,68 +124,26 @@ runs:
     - name: Learn GitHub environments variables by Python
       if: fromJSON(inputs.use-python)
       id: setvars
-      shell: python -X utf8 {0}
+      shell: bash
       run: |
-        if "true" == "${{ fromJSON(inputs.verbose) }}":
-          print("Learn GitHub environments variables by Python")
+        if "${{ fromJSON(inputs.verbose) }}" ; then
+          echo "Learn GitHub environments variables by Python"
+        fi
 
-        # А это строгий вариант, с обработкой, как многострочных строк, так и
-        # произвольного PATH
+        if ${{ runner.os == 'Windows' }} ; then
+          python pyprintenv.py \
+            --trace "${{ steps.cp.outputs.path }}\\setvars.bat"
+        else
+          python pyprintenv.py --shell bash \
+            --trace ". ${{ steps.cp.outputs.path }}/setvars.sh"
+        fi
 
-        import os
-        import platform
-        import re
-        import uuid
-
-        dlmt = uuid.uuid4()
-        if "Windows" == platform.system():
-          cmd = ("@${{ steps.cp.outputs.path }}\\setvars.bat"
-                 " && @python env.py -0")
-          pd = ";"
-          ign = set()
-        else:
-          cmd = "bash -c '. ${{ steps.cp.outputs.path }}/setvars.sh && env -0'"
-          pd = ":"
-          ign = {"SHLVL", "_"}
-        with os.popen(cmd) as f, \
-             open(os.environ["GITHUB_ENV"], mode="a") as fe, \
-             open(os.environ["GITHUB_PATH"], mode="a") as fp:
-          for l in f.buffer.read().split(b"\0"):
-            if not l:
-              # print("Empty: {l=}")
-              continue
-            m = re.match(r"([^=]*)=(.*)$", l.decode(), flags=re.DOTALL)
-            assert m, f"pm.py: Don't match VAR=VALUE {l, l.decode(), m=}"
-            if "path" == m.group(1).lower():
-              o = (os.environ["PATH"] if "PATH" in os.environ else
-                   os.environ["Path"])
-              n = m.group(2)
-              oi, ni = len(o), len(n)
-              while (oi and ni and o[oi:].lower() == n[ni:].lower()):
-                # print(f"{oi, ni, o[oi:], n[ni:]=}")
-                oi = max(0, o.rfind(pd, 0, oi))
-                np = ni
-                ni = max(0, n.rfind(pd, 0, np))
-              if ni:
-                assert -1 == np or len(n) == np or n[np] == pd
-                # TODO в случае, если PATH изменился с конца, он дублируется
-                for d in n[:(np if 0 < np else len(n))].split(pd)[::-1]:
-                  print(d, file=fp)
-            elif (m.group(1) not in os.environ or
-                  os.environ[m.group(1)].lower() != m.group(2).lower()
-                 ) and m.group(1) not in ign:
-              if '\n' not in m.group(2):
-                print(f"{m.group(1)}={m.group(2)}", file=fe)
-              else:
-                print(f"{m.group(1)}<<{dlmt}\n{m.group(2)}\n{dlmt}", file=fe)
-
-        if "true" == "${{ fromJSON(inputs.verbose) }}":
-          print(f"{os.environ["GITHUB_ENV"]=}")
-          with open(os.environ["GITHUB_ENV"]) as fe:
-            print(fe.read())
-          print(f"{os.environ["GITHUB_PATH"]=}")
-          with open(os.environ["GITHUB_PATH"]) as fp:
-            print(fp.read())
+        if ${{ fromJSON(inputs.verbose) }} ; then
+          echo GITHUB_ENV=$GITHUB_ENV
+          cat $GITHUB_ENV
+          echo GITHUB_PATH=$GITHUB_PATH
+          cat $GITHUB_PATH
+        fi
 
     - name: Show version for bash
       if: fromJSON(inputs.verbose) && runner.os != 'Windows'
