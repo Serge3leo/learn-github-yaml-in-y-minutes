@@ -136,6 +136,7 @@ runs:
         else:
           python pyprintenv.py --shell bash \
             --trace ". ${{ steps.cp.outputs.path }}/setvars.sh"
+        fi
 
         if ${{ fromJSON(inputs.verbose) }} ; then
           echo GITHUB_ENV=$GITHUB_ENV
