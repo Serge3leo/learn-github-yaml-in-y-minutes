@@ -22,50 +22,80 @@ __date__ = "10 March 2026"
 __version__ = "$Revision: 0 $"
 __author__ = ("Сергей Леонтьев (leo@sai.msu.ru)")
 
+import enum
 import os
 import platform
 import re
 import sys
+import typing
 import uuid
 
-def printenv(null: bool, variables: list[str] = None) -> None:
+class OutputFormat(enum.Enum):
+    NL = 1
+    NUL = 2
+    MULTILINE = 3
+
+_dlmt = "ppe_" + str(uuid.uuid4())
+
+def _str_variable(fmt: OutputFormat, variable: str, value: str) -> str:
+    if fmt.NUL == fmt:
+        return f"{variable}={value}\0"
+    if '\n' in variable:  # TODO: А нужно ли проверять?
+        raise ValueError(f"Multiline variable name: {variable=}")
+    if fmt.NL == fmt or '\n' not in value:
+        return f"{variable}={value}\n"
+    if fmt.MULTILINE == fmt:
+        return f"{variable}<<{_dlmt}\n{value}\n{_dlmt}\n"
+    raise ValueError("Unknown format: {fmt=}")
+
+def printenv(fmt: OutputFormat, variables: list[str] = None,
+             encoding: str = None) -> None:
+    if encoding:
+        sys.stdout.reconfigure(encoding=encoding)  # TODO with/try
     if not variables:
         variables = os.environ.keys()
-    end = '\0' if null else '\n'
     for v in variables:
         if v in os.environ:
-            print(f"{v}={os.environ[v]}", end=end)
+            print(_str_variable(fmt, v, os.environ[v]), end='')
 
-def trace(cmd: str, github_env: str = None, github_path: str = None,
-          shell: str = None) -> None:
-    dlmt = uuid.uuid4()
+def _open_env(file: str, env: str, **kwargs) -> typing.IO[typing.AnyStr]:
+    if not file:
+        if env not in os.environ:
+            if 'encoding' in kwargs:
+                sys.stdout.reconfigure(encoding=kwargs['encoding'])
+            return sys.stdout
+        file = os.environ[env]
+    return open(file, **kwargs)
+
+def trace(cmd: str, path: bool, encoding: str = None, shell: str = None,
+          github_env: str = None, github_path: str = None) -> None:
     if "Windows" == platform.system():
-        cmd = f"@{cmd} && @python pyprintenv.py -0"
+        cmd = f"@{cmd} && @{sys.executable} pyprintenv.py -0 --encoding=utf-8"
         pd = ";"
-        stdout = "con:"  # TODO
         ign = set()
     else:
         if not shell:
-            cmd = f"{cmd} && env -0"
+            cmd = f"{cmd} && {sys.executable} pyprintenv.py -0 --encoding=utf-8"
         else:
-            cmd = f"{shell} -c '{cmd} && env -0'"
+            cmd = f"{shell} -c '{cmd} && {sys.executable} pyprintenv.py -0 --encoding=utf-8'"
         pd = ":"
-        stdout = "/dev/stdout"  # TODO
         ign = {"SHLVL", "_"}
-    if not github_env:
-        github_env = os.environ.get("GITHUB_ENV", stdout)
-    if not github_path:
-        github_path = os.environ.get("GITHUB_PATH", stdout)
-    with os.popen(cmd) as f, \
-         open(github_env, mode="a" if stdout != github_env else "w") as fe, \
-         open(github_path, mode="a" if stdout != github_path else "w") as fp:
-        for l in f.buffer.read().split(b"\0"):
-            if not l:
-                # print("Empty: {l=}")
+    with os.popen(cmd) as fi, \
+         _open_env(github_env, "GITHUB_ENV", mode="a",
+                   encoding=encoding) as fe, \
+         _open_env(github_path, "GITHUB_PATH", mode="a",
+                   encoding=encoding) as fp:
+        for line in fi.buffer.read().split(b"\0"):
+            if not line:
+                # print("Empty: {line=}")
                 continue
-            m = re.match(r"([^=]*)=(.*)$", l.decode(), flags=re.DOTALL)
-            assert m, f"pm.py: Don't match VAR=VALUE {l, l.decode(), m=}"
-            if "path" == m.group(1).lower():
+            m = re.match(r"([^=]*)=(.*)$",
+                    line.decode(),  # TODO
+                    flags=re.DOTALL)
+            if not m:
+                raise ValueError(
+                        f"Don't match VAR=VALUE {line, line.decode(), m=}")
+            if path and "path" == m.group(1).lower():
                 o = (os.environ["PATH"] if "PATH" in os.environ else
                      os.environ["Path"])
                 n = m.group(2)
@@ -79,48 +109,47 @@ def trace(cmd: str, github_env: str = None, github_path: str = None,
                     assert -1 == np or len(n) == np or n[np] == pd
                     # TODO в случае, если PATH изменился с конца, он дублируется
                     for d in n[:(np if 0 < np else len(n))].split(pd)[::-1]:
+                        if '\n' in d:  # TODO: А нужно ли проверять?
+                            raise ValueError(f"NewLine in PATH: {d=}")
                         print(d, file=fp)
             elif (m.group(1) not in os.environ or
                   os.environ[m.group(1)].lower() != m.group(2).lower()
                  ) and m.group(1) not in ign:
-                if '\n' not in m.group(2):
-                    print(f"{m.group(1)}={m.group(2)}", file=fe)
-                else:
-                    print(f"{m.group(1)}<<{dlmt}\n{m.group(2)}\n{dlmt}", file=fe)
+                print(_str_variable(OutputFormat.MULTILINE,
+                                    m.group(1), m.group(2)), end='', file=fe)
 
 if __name__ == '__main__':
     import argparse
-    import locale
-
-    # TODO Перезапуск в "Python UTF-8 Mode"
-    if not sys.flags.utf8_mode and "UTF-8" != locale.getencoding():
-        sys.argv.insert(0, "utf8")
-        sys.argv.insert(0, "-X")
-        sys.argv.insert(0, sys.executable)
-        # print(f"{locale.getencoding(), sys.executable, sys.argv=}", file=sys.stderr)
-        os.execvp(sys.executable, sys.argv)
-    assert sys.flags.utf8_mode or "UTF-8" == locale.getencoding(), \
-           "Must start with `-X utf8`"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("variables", nargs='*',
-                        help="Environment variables", default=None)
+                        help="environment variables", default=None)
     parser.add_argument("-0", "--null", action='store_true',
-                        help="End each output line with NUL, not newline")
+                        help="end each output line with NUL, not newline")
+    parser.add_argument("-g", "--github-multiline", action='store_true',
+                        help="output multiline strings as GitHub Actions")
+    parser.add_argument("--encoding",
+                        help="output encoding (utf-8, ...)")
     parser.add_argument("--trace",
-                        help="Command for trace")
-    if "Windows" != platform.system():  # TODO
-        parser.add_argument("--shell",
-                            help="Shell to start cmd")
+                        help="command to trace environment")
+    parser.add_argument("--path", action='store_true',
+                        help="store PATH separately, in GITHUB_PATH")
+    parser.add_argument("--shell",
+                        help=("shell to start cmd"
+                              if "Windows" != platform.system()
+                              else argparse.SUPPRESS))  # TODO
     parser.add_argument("--github-env",
-                        help="GITHUB_ENV file")
+                        help="GITHUB_ENV file name")
     parser.add_argument("--github-path",
-                        help="GITHUB_PATH file")
+                        help="GITHUB_PATH file name")
     args = parser.parse_args()
+    if args.null and args.github_multiline:
+        argparse.error("NUL flags and GitHub multiline flags mutually exlusive")
+        sys.exit(1)
     if args.trace:
-        if "Windows" != platform.system():
-            trace(args.trace, args.github_env, args.github_path, args.shell)
-        else:
-            trace(args.trace, args.github_env, args.github_path)
+        trace(args.trace, args.path, args.encoding, args.shell,
+              args.github_env, args.github_path)
     else:
-        printenv(args.null, args.variables)
+        printenv((OutputFormat.NUL if args.null else
+                  OutputFormat.MULTILINE if args.github_multiline else
+                  OutputFormat.NL), args.variables, encoding=args.encoding)
