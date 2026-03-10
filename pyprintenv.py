@@ -31,7 +31,6 @@ import uuid
 def printenv(null: bool, variables: list[str] = None) -> None:
     if not variables:
         variables = os.environ.keys()
-    # sys.stdout.reconfigure(encoding='utf-8')
     end = '\0' if null else '\n'
     for v in variables:
         if v in os.environ:
@@ -43,7 +42,7 @@ def trace(cmd: str, github_env: str = None, github_path: str = None,
     if "Windows" == platform.system():
         cmd = f"@{cmd} && @python pyprintenv.py -0"
         pd = ";"
-        stdout = "con:"
+        stdout = "con:"  # TODO
         ign = set()
     else:
         if not shell:
@@ -51,14 +50,12 @@ def trace(cmd: str, github_env: str = None, github_path: str = None,
         else:
             cmd = f"{shell} -c '{cmd} && env -0'"
         pd = ":"
-        stdout = "/dev/stdout"
+        stdout = "/dev/stdout"  # TODO
         ign = {"SHLVL", "_"}
     if not github_env:
         github_env = os.environ.get("GITHUB_ENV", stdout)
-    print(f"github_env={github_env}", file=sys.stderr)
     if not github_path:
         github_path = os.environ.get("GITHUB_PATH", stdout)
-    print(f"github_path={github_path}", file=sys.stderr)
     with os.popen(cmd) as f, \
          open(github_env, mode="a" if stdout != github_env else "w") as fe, \
          open(github_path, mode="a" if stdout != github_path else "w") as fp:
@@ -100,7 +97,7 @@ if __name__ == '__main__':
         sys.argv.insert(0, "utf8")
         sys.argv.insert(0, "-X")
         sys.argv.insert(0, sys.executable)
-        print(f"{locale.getencoding(), sys.executable, sys.argv=}", file=sys.stderr)
+        # print(f"{locale.getencoding(), sys.executable, sys.argv=}", file=sys.stderr)
         os.execvp(sys.executable, sys.argv)
     assert sys.flags.utf8_mode or "UTF-8" == locale.getencoding(), \
            "Must start with `-X utf8`"
@@ -112,7 +109,7 @@ if __name__ == '__main__':
                         help="End each output line with NUL, not newline")
     parser.add_argument("--trace",
                         help="Command for trace")
-    if "Windows" != platform.system():
+    if "Windows" != platform.system():  # TODO
         parser.add_argument("--shell",
                             help="Shell to start cmd")
     parser.add_argument("--github-env",
