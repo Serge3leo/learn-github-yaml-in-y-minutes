@@ -61,11 +61,11 @@ def printenv(fmt: OutputFormat, variables: list[str] = None,
 def _open_env(file: 'file name', env: str, **kwargs) -> 'file object':
     if not file:
         if env not in os.environ:
-print(f"{file, env, kwargs['encoding'] if 'encoding' in kwargs else 'none'=}", file=sys.stderr)
+            print(f"{file, env, kwargs['encoding'] if 'encoding' in kwargs else 'none'=}", file=sys.stderr)
             if 'encoding' in kwargs:
                 sys.stdout.reconfigure(encoding=kwargs['encoding'])
             return sys.stdout
-print(f"{file, env, os.environ[env]=}", file=sys.stderr)
+        print(f"{file, env, os.environ[env]=}", file=sys.stderr)
         file = os.environ[env]
     return open(file, **kwargs)
 
