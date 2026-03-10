@@ -436,7 +436,7 @@ jobs:
         uses: ./
         with:
           # Для отладки, которые не по умолчанию,, можно убрать комментарий
-          # cache: false
+          cache: false
           # use-python: false
           verbose: true
 
