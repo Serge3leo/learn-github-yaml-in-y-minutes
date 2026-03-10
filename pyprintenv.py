@@ -39,14 +39,11 @@ def printenv(null: bool, variables: list[str] = None) -> None:
 
 def trace(cmd: str, github_env: str = None, github_path: str = None,
           shell: str = None) -> None:
-    if not github_env:
-        github_env = os.environ.get("GITHUB_ENV", "/dev/stdout")
-    if not github_path:
-        github_path = os.environ.get("GITHUB_PATH", "/dev/stdout")
     dlmt = uuid.uuid4()
     if "Windows" == platform.system():
         cmd = f"@{cmd} && @python pyprintenv.py -0"
         pd = ";"
+        stdout = "con:"
         ign = set()
     else:
         if not shell:
@@ -54,10 +51,17 @@ def trace(cmd: str, github_env: str = None, github_path: str = None,
         else:
             cmd = f"{shell} -c '{cmd} && env -0'"
         pd = ":"
+        stdout = "/dev/stdout"
         ign = {"SHLVL", "_"}
+    if not github_env:
+        github_env = os.environ.get("GITHUB_ENV", stdout)
+    print(f"github_env={github_env}", file=sys.stderr)
+    if not github_path:
+        github_path = os.environ.get("GITHUB_PATH", stdout)
+    print(f"github_path={github_path}", file=sys.stderr)
     with os.popen(cmd) as f, \
-         open(github_env, mode="a") as fe, \
-         open(github_path, mode="a") as fp:
+         open(github_env, mode="a" if stdout != github_env else "w") as fe, \
+         open(github_path, mode="a" if stdout != github_path else "w") as fp:
         for l in f.buffer.read().split(b"\0"):
             if not l:
                 # print("Empty: {l=}")
@@ -92,11 +96,14 @@ if __name__ == '__main__':
     import locale
 
     # TODO Перезапуск в "Python UTF-8 Mode"
-    if "UTF-8" != locale.getencoding():
+    if not sys.flags.utf8_mode and "UTF-8" != locale.getencoding():
         sys.argv.insert(0, "utf8")
         sys.argv.insert(0, "-X")
+        sys.argv.insert(0, sys.executable)
+        print(f"{locale.getencoding(), sys.executable, sys.argv=}", file=sys.stderr)
         os.execvp(sys.executable, sys.argv)
-    assert "UTF-8" == locale.getencoding(), "Must start with `-X utf8`"
+    assert sys.flags.utf8_mode or "UTF-8" == locale.getencoding(), \
+           "Must start with `-X utf8`"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("variables", nargs='*',
@@ -114,6 +121,9 @@ if __name__ == '__main__':
                         help="GITHUB_PATH file")
     args = parser.parse_args()
     if args.trace:
-        trace(args.trace, args.github_env, args.github_path, args.shell)
+        if "Windows" != platform.system():
+            trace(args.trace, args.github_env, args.github_path, args.shell)
+        else:
+            trace(args.trace, args.github_env, args.github_path)
     else:
         printenv(args.null, args.variables)
