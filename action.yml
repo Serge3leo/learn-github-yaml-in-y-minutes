@@ -130,11 +130,12 @@ runs:
 
         dlmt = uuid.uuid4()
         if "Windows" == platform.system():
-          cmd = "@dists\\setvars.bat && @python env.py -0"
+          cmd = ("@${{ steps.cp.outputs.path }}\\setvars.bat"
+                 " && @python env.py -0")
           pd = ";"
           ign = set()
         else:
-          cmd = "bash -c '. dists/setvars.sh && env -0'"
+          cmd = "bash -c '. ${{ steps.cp.outputs.path }}/setvars.sh && env -0'"
           pd = ":"
           ign = {"SHLVL", "_"}
         with os.popen(cmd) as f, \
