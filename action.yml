@@ -94,6 +94,12 @@ runs:
         if "${{ fromJSON(inputs.verbose) }}" ; then
           echo "Learn GitHub environments variables by bash/cmd"
         fi
+
+        # ПРЕДУПРЕЖДЕНИЕ: 1. Этот вариант предполагает, что `setvars.*` не
+        #                    определяют многострочных переменных окружения;
+        #                 2. Переменные, согласно списка;
+        #                 3. Предполагается, только один элемент PATH, первый.
+
         ptrn="^(path|learn_github)="
         pd="${{ case(runner.os == 'Windows', ';', ':') }}"
         if ${{ runner.os == 'Windows' }} ; then
@@ -122,6 +128,9 @@ runs:
       run: |
         if "true" == "${{ fromJSON(inputs.verbose) }}":
           print("Learn GitHub environments variables by Python")
+
+        # А это строгий вариант, с обработкой, как многострочных строк, так и
+        # произвольного PATH
 
         import os
         import platform
