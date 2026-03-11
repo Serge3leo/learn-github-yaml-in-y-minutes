@@ -119,8 +119,6 @@ def trace(cmd: str, path: bool, encoding: str = None, shell: str = None,
                                     m.group(1), m.group(2)), end='', file=fe)
 
 if __name__ == '__main__':
-    import argparse
-
     parser = argparse.ArgumentParser()
     parser.add_argument("variables", nargs='*',
                         help="environment variables", default=None)
