@@ -7,9 +7,9 @@ name: Рабочий процесс изучения GitHub YAML за Y мину
 
 on:  # yamllint disable-line rule:truthy
   push:
-    branches: ["main"]
+    branches: [main]
   pull_request:
-    branches: ["main"]
+    branches: [main]
 
 env:
   # Примеры из "Изучите X за Y минут (где X=YAML)"
